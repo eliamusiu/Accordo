@@ -68,4 +68,12 @@ public class Model {
     public Post getPost(int index) {
         return posts.get(index);
     }
+
+    public int getPostsSize() {
+        return posts.size();
+    }
+
+    public int getChannelsSize() {
+        return channels.size();
+    }
 }
