@@ -31,9 +31,15 @@ public class Adapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return new ViewHolder(view, recyclerViewClickListener);
         } else if (holderType == "posts") {
             switch (viewType) {
-                case 0:
-                    View view = inflater.inflate(R.layout.text_post_list_row, parent, false);
-                    return new ViewHolder(view, recyclerViewClickListener);
+                case 1:
+                    View tView = inflater.inflate(R.layout.text_post_list_row, parent, false);
+                    return new ViewHolder(tView, recyclerViewClickListener);
+                case 2:
+                    View iView = inflater.inflate(R.layout.image_post_list_row, parent, false);
+                    return new ViewHolder(iView, recyclerViewClickListener);
+                case 3:
+                    View lView = inflater.inflate(R.layout.location_post_list_row, parent, false);
+                    return new ViewHolder(lView, recyclerViewClickListener);
             }
         }
         return null;
@@ -41,14 +47,20 @@ public class Adapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        ViewHolder viewHolder = (ViewHolder) holder;
         if (holderType == "channels") {
-            ViewHolder viewHolder = (ViewHolder) holder;
             viewHolder.updateContent((Channel) items.get(position));
         } else if (holderType == "posts") {
             switch (holder.getItemViewType()) {
-                case 0:
-                    ViewHolder viewHolder = (ViewHolder) holder;
-                    viewHolder.updateContent((Channel) items.get(position));
+                case 1:
+                    viewHolder.updateContent((Post) items.get(position));
+                    break;
+                case 2:
+                    viewHolder.updateContent((TextImagePost) items.get(position));
+                    break;
+                case 3:
+                    viewHolder.updateContent((LocationPost) items.get(position));
+                    break;
             }
         }
     }
@@ -64,11 +76,11 @@ public class Adapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Post post = (Post) items.get(position);
             switch (post.getType()) {
                 case "t":
-                    return 0;
-                case "i":
                     return 1;
-                case "l":
+                case "i":
                     return 2;
+                case "l":
+                    return 3;
             }
         }
         return 0;

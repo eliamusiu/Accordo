@@ -1,6 +1,7 @@
 package com.example.accordo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +47,11 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewCli
                     dialog.show();
                 }
             return false;
+        });
+
+        ((FloatingActionButton)findViewById(R.id.fab)).setOnClickListener( v -> {
+            DialogFragment fragment = new AddChannelFragment();
+            fragment.show(getSupportFragmentManager(), " Add channel fragment");
         });
     }
 

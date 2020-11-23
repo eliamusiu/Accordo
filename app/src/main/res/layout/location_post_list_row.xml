@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="Elia Musiu"/>
+            android:text="@string/unknown_author"/>
 
     </LinearLayout>
 
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_gravity="center_vertical"
-            android:text="Bla bla bla blabla bla blabla"/>
+            android:text="Posizione"/>
 
     </LinearLayout>
 

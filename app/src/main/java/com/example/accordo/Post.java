@@ -1,7 +1,7 @@
 package com.example.accordo;
 
-public class Post {
-    private String uid, name, pversion, pid, type, content;
+public abstract class Post {
+    private String uid, name, pversion, pid, type;
 
     public String getUid() {
         return uid;
@@ -41,13 +41,5 @@ public class Post {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 }

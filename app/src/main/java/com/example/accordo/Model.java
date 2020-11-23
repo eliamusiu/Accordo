@@ -13,7 +13,10 @@ public class Model {
     private ArrayList<Channel> channels = null;
     private ArrayList<Post> posts = null;   // TODO: istanziare nel costruttore
 
-    private Model() { channels = new ArrayList<Channel>(); }
+    private Model() {
+        channels = new ArrayList<Channel>();
+        posts = new ArrayList<Post>();
+    }
 
     public static synchronized Model getInstance() {
         if (instance == null) {
@@ -23,6 +26,7 @@ public class Model {
     }
 
     public void addChannels(JSONObject wallJson) throws JSONException {
+        channels.clear();
         Gson gson = new Gson();
         JSONArray jsonArray = wallJson.getJSONArray("channels");
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -32,15 +36,36 @@ public class Model {
         }
     }
 
+    public void addPosts(JSONObject channelJson) throws JSONException {
+        posts.clear();
+        Gson gson = new Gson();
+        JSONArray jsonArray = channelJson.getJSONArray("posts");
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject postJson = jsonArray.getJSONObject(i);
+            String type = (String) postJson.get("type");
+            if (type.equals("t") || type.equals("i")) {
+                TextImagePost post = gson.fromJson(String.valueOf(postJson), TextImagePost.class);
+                posts.add(post);
+            } else if (type.equals("l")) {
+                LocationPost locationPost = gson.fromJson(String.valueOf(postJson), LocationPost.class);
+                posts.add(locationPost);
+            }
+        }
+    }
+
     public ArrayList<Channel> getAllChannels() {
         return channels;
     }
 
-    public Channel get(int index) {
+    public ArrayList<Post> getAllPosts() {
+        return posts;
+    }
+
+    public Channel getChannel(int index) {
         return channels.get(index);
     }
 
-    public int getSize() {
-        return channels.size();
+    public Post getPost(int index) {
+        return posts.get(index);
     }
 }
