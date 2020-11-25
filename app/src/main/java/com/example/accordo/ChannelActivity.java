@@ -8,12 +8,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import org.json.JSONException;
 
 public class ChannelActivity extends AppCompatActivity implements OnRecyclerViewClickListener {
-    final String TAG = String.valueOf(WallActivity.class);
-    final String sid = "35vzqlT9QKUogwn6";
+    private final String TAG = ChannelActivity.class.toString();
+    private CommunicationController cc;
+    private String ctitle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +26,24 @@ public class ChannelActivity extends AppCompatActivity implements OnRecyclerView
         // Prende l'indice del'elemento della RecyclerView che è stato cliccato
         Intent intent = getIntent();
         int index = intent.getIntExtra("channelIndex", -1);
-        String ctitle = Model.getInstance().getChannel(index).getCtitle();
+        ctitle = Model.getInstance().getChannel(index).getCtitle();
+        getPosts();
 
-        // Richiesta di rete per ottenere i post
-        CommunicationController cc = new CommunicationController(this);
+        findViewById(R.id.sendButton).setOnClickListener(v -> {
+            ((EditText)findViewById(R.id.postEditText)).setText("");
+            try {
+                addPost();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    // Richiesta di rete per ottenere i post
+    private void getPosts() {
+        cc = new CommunicationController(this);
         try {
-            cc.getPosts(sid, ctitle,
+            cc.getPosts(ctitle,
                     response -> {
                         // TODO: fare metodo separato
                         try {
@@ -44,9 +59,20 @@ public class ChannelActivity extends AppCompatActivity implements OnRecyclerView
         }
     }
 
+    private void addPost() throws JSONException {
+        String postText = ((EditText)findViewById(R.id.postEditText)).getText().toString();
+        cc = new CommunicationController(this);
+        cc.addPost(ctitle, postText, "t",
+                response -> getPosts(),
+                error -> Log.e(TAG, "Errore aggiunta post: " + error));
+    }
+
     private void setRecyclerView() {
         RecyclerView rv = findViewById(R.id.postsRecyclerView);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(true);
+        rv.setLayoutManager(linearLayoutManager);
+        rv.scrollToPosition(0);
         PostAdapter adapter = new PostAdapter(this, this);
         rv.setAdapter(adapter);
     }

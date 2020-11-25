@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toTopOf="@id/bottomMenu"
         android:layout_margin="16dp" />
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/bottomMenu"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -39,6 +39,6 @@
             android:layout_height="wrap_content"
             app:menu="@menu/bottom_navigation_menu" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

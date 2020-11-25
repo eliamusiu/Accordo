@@ -12,6 +12,8 @@ public class Model {
     private static Model instance = null;
     private ArrayList<Channel> channels = null;
     private ArrayList<Post> posts = null;   // TODO: istanziare nel costruttore
+    private String sid = null;
+    private String uid = null;
 
     private Model() {
         channels = new ArrayList<Channel>();
@@ -51,6 +53,33 @@ public class Model {
                 posts.add(locationPost);
             }
         }
+    }
+
+    public void addPost(String uid, String name, String pversion, String pid, String type, String content) {
+        TextImagePost post = new TextImagePost();
+        post.setUid(uid);
+        post.setName(name);
+        post.setPversion(pversion);
+        post.setType(type);
+        post.setPid(pid);
+        post.setContent(content);
+        posts.add(post);
+    }
+
+    public void setSid(String sid) {
+        this.sid = sid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getSid() {
+        return sid;
+    }
+
+    public  String getUid() {
+        return uid;
     }
 
     public ArrayList<Channel> getAllChannels() {

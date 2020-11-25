@@ -43,11 +43,10 @@ public class AddChannelFragment extends DialogFragment {
                 // Richiesta di rete
                 CommunicationController cc = new CommunicationController(getContext());
                 final EditText et = view.findViewById(R.id.ctitleTextView);
-                String sid = getArguments().getString("sid");
                 String ctitle = et.getText().toString();
 
                 try {
-                    cc.addChannel(sid, ctitle,
+                    cc.addChannel(ctitle,
                             response -> Log.d(TAG, "Canale creato"), //TODO: visualizzare messaggio
                             error -> Log.d(TAG, "Errore creazione canale: " + error.toString())
                     );
