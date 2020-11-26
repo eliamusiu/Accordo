@@ -13,4 +13,5 @@
     <string name="new_post_hint">Scrivi qui il tuo post...</string>
     <string name="preference_file_uid">uid</string>
     <string name="preference_file_uid_default_value">no</string>
+    <string name="menu_refresh">Aggiorna</string>
 </resources>

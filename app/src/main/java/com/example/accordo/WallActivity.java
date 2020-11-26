@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -21,6 +24,7 @@ import org.json.JSONException;
 public class WallActivity extends AppCompatActivity implements OnRecyclerViewClickListener {
     final String TAG = WallActivity.class.toString();
     CommunicationController cc;
+    SwipeRefreshLayout wallSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +33,9 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
 
         // Accesso implicito
         setSidFromSharedPreferences();      // Prende il sid dalle shared preferences
-        //setUidFromSharedPreferences();
         if (Model.getInstance().getSid() == null ||                                 // Se non c'è il sid
                 Model.getInstance().getSid().equals("no")) {                        // o se è il default value
             getSid();                       // Richiesta di rete per ottenere il sid
-            //getUid();
         } else {                                                                    // Se c'è
             getWall();
         }
@@ -55,6 +57,16 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
             DialogFragment fragment = new AddChannelFragment();
             fragment.show(getSupportFragmentManager(), " Add channel fragment");
         });
+
+        wallSwipeRefreshLayout = ((SwipeRefreshLayout)findViewById(R.id.wallSwiperefresh));
+        wallSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        getWall();
+                    }
+                }
+        );
     }
 
     private void setSharedPreference(String sid) {
@@ -85,37 +97,6 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
             Log.d(TAG, "request error: " + error.toString());
         });
     }
-    /*
-    private void setUidSharedPreference(String uid) {
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.preference_file_uid), uid);
-        Model.getInstance().setSid(uid);
-        editor.apply();
-    }
-
-    private void setUidFromSharedPreferences() {
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        String defaultValue = getResources().getString(R.string.preference_file_uid_default_value);
-        Model.getInstance().setUid(sharedPref.getString(getString(R.string.preference_file_uid), defaultValue));
-    }
-
-    private void getUid() {
-        try {
-            cc = new CommunicationController(this);
-            cc.getProfile(response -> {
-                        try {
-                            setUidSharedPreference((String) response.get("uid"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    },
-                    error -> Log.e(TAG, "Errore richiesta: " + error));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-    */
 
     private void getWall() {
         cc = new CommunicationController(this);
@@ -129,6 +110,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
                             e.printStackTrace();
                         }
                         setRecyclerView();
+                        wallSwipeRefreshLayout.setRefreshing(false);
                     },
                     error -> Log.d(TAG, "request error: " + error.toString()));
         } catch (JSONException e) {
