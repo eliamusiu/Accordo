@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class CommunicationController {
     private static final String BASE_URL = "https://ewserver.di.unimi.it/mobicomp/accordo/";
-    private static final String sid = Model.getInstance().getSid();
+    private final String sid = Model.getInstance().getSid();
     private RequestQueue requestQueue = null;
 
     public CommunicationController(Context context) {
@@ -108,6 +108,17 @@ public class CommunicationController {
         jsonBody.put("lat", lat);
         jsonBody.put("lon", lon);
         jsonBody.put("type", type);
+
+        JsonObjectRequest request = new JsonObjectRequest(url, jsonBody, responseListener, errorListener);
+        requestQueue.add(request);
+    }
+
+    public void getPostImage(String pid, Response.Listener<JSONObject> responseListener, Response.ErrorListener errorListener) throws JSONException {
+        final String serviceUrl = "getPostImage.php";
+        final String url = BASE_URL + serviceUrl;
+        final JSONObject jsonBody = new JSONObject();
+        jsonBody.put("sid", sid);
+        jsonBody.put("pid", pid);
 
         JsonObjectRequest request = new JsonObjectRequest(url, jsonBody, responseListener, errorListener);
         requestQueue.add(request);

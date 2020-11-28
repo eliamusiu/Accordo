@@ -43,11 +43,8 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         // Gestore evento sulla barra di navigazione
         ((BottomNavigationView)findViewById(R.id.bottom_navigation)).setOnNavigationItemSelectedListener( item -> {
                 if (item.getItemId() == R.id.profile_page) {
-                    View view = getLayoutInflater().inflate(R.layout.fragment_profile_bottom_sheet, null);
-
                     ProfileBottomSheetFragment dialog = ProfileBottomSheetFragment.newInstance();
                     dialog.show(getSupportFragmentManager(), ProfileBottomSheetFragment.TAG);
-                    ProfileBottomSheetFragment fragment = new ProfileBottomSheetFragment();
                 }
             return false;
         });

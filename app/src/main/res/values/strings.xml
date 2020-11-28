@@ -14,4 +14,6 @@
     <string name="preference_file_uid">uid</string>
     <string name="preference_file_uid_default_value">no</string>
     <string name="menu_refresh">Aggiorna</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

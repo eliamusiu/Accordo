@@ -1,21 +1,29 @@
 package com.example.accordo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toolbar;
 
+import com.android.volley.toolbox.ImageLoader;
+
 import org.json.JSONException;
+
+import java.util.ArrayList;
 
 public class ChannelActivity extends AppCompatActivity implements OnRecyclerViewClickListener {
     private final String TAG = ChannelActivity.class.toString();
@@ -67,8 +75,7 @@ public class ChannelActivity extends AppCompatActivity implements OnRecyclerView
                         // TODO: fare metodo separato
                         try {
                             Model.getInstance().addPosts(response);
-                            setRecyclerView();
-                            postsSwipeRefreshLayout.setRefreshing(false);
+                            getImages();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -76,6 +83,27 @@ public class ChannelActivity extends AppCompatActivity implements OnRecyclerView
                     error -> Log.d(TAG, "request error: " + error.toString()));
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void getImages() throws JSONException {
+        cc = new CommunicationController(this);
+        ArrayList<TextImagePost> imagePosts = Model.getInstance().getAllImagePosts();
+        for (TextImagePost post : imagePosts) {
+            cc.getPostImage(post.getPid(),
+                    reponse -> {
+                        try {
+                            post.setContent(reponse.getString("content"));
+                            if (imagePosts.indexOf(post) == (imagePosts.size() - 1)) {
+                                setRecyclerView();
+                                postsSwipeRefreshLayout.setRefreshing(false);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    },
+                    error -> Log.d(TAG, "request error: " + error.toString())
+            );
         }
     }
 
@@ -104,6 +132,12 @@ public class ChannelActivity extends AppCompatActivity implements OnRecyclerView
     @Override
     public void onRecyclerViewClick(View v, int position) {
         // TODO: gestire l'apertura dell'immagine o della posizione
+        new StfalconImageViewer.Builder<>(context, images, new ImageLoader<String>() {
+            @Override
+            public void loadImage(ImageView imageView, String imageUrl) {
+                Glide.with(context).load(imageUrl).into(imageView)
+            }
+        }).show();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

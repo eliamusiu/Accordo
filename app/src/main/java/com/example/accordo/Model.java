@@ -90,6 +90,16 @@ public class Model {
         return posts;
     }
 
+    public ArrayList<TextImagePost> getAllImagePosts() {
+        ArrayList<TextImagePost> textImagePosts = new ArrayList<>();
+        for (Post post : posts) {
+            if (post.getType().equals("i")) {
+                textImagePosts.add((TextImagePost) post);
+            }
+        }
+        return textImagePosts;
+    }
+
     public Channel getChannel(int index) {
         return channels.get(index);
     }
