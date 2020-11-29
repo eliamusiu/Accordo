@@ -17,11 +17,11 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
     public PostViewHolder(@NonNull View itemView, OnRecyclerViewClickListener recyclerViewClickListener) {
         super(itemView);
-        itemView.setOnClickListener(this::onClick);
         this.recyclerViewClickListener = recyclerViewClickListener;
         authorTextView = itemView.findViewById(R.id.authorTextView);
         contentTextView = itemView.findViewById(R.id.contentTextView);
         contentImageView = itemView.findViewById(R.id.contentImageView);
+        //itemView.setOnClickListener(this::onClick);
     }
     public void updateContent(Post post) {
         if (post.getName() != null) {
@@ -33,9 +33,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
     public void updateContent(TextImagePost post) {
         authorTextView.setText(post.getName());
-        byte[] decodedString = Base64.decode(post.getContent(), Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        contentImageView.setImageBitmap(decodedByte);
+        contentImageView.setImageBitmap(Utils.getBitmapFromBase64(post.getContent()));
+        contentImageView.setOnClickListener(this::onClick);
     }
 
     public void updateContent(LocationPost post) {

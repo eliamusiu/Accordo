@@ -38,6 +38,7 @@ public class ChannelActivity extends AppCompatActivity implements OnRecyclerView
     private CommunicationController cc;
     private String ctitle;
     SwipeRefreshLayout postsSwipeRefreshLayout;
+    private List<Drawable> images = new ArrayList<>();
 
 
     @Override
@@ -101,7 +102,10 @@ public class ChannelActivity extends AppCompatActivity implements OnRecyclerView
             cc.getPostImage(post.getPid(),
                     reponse -> {
                         try {
-                            post.setContent(reponse.getString("content"));
+                            String content = reponse.getString("content");
+                            post.setContent(content);
+                            Drawable d = new BitmapDrawable(getResources(), Utils.getBitmapFromBase64(content));
+                            images.add(d);
                             if (imagePosts.indexOf(post) == (imagePosts.size() - 1)) {
                                 setRecyclerView();
                                 postsSwipeRefreshLayout.setRefreshing(false);
@@ -140,11 +144,8 @@ public class ChannelActivity extends AppCompatActivity implements OnRecyclerView
     @Override
     public void onRecyclerViewClick(View v, int position) {
         // TODO: gestire l'apertura dell'immagine o della posizione
-        View nextChild = ((ViewGroup) v).getChildAt(1);
-        ImageView imageView = (ImageView)nextChild;
-        //Glide.with(this).load(((BitmapDrawable)imageView.getDrawable()).getBitmap()).into(imageView);
-        List<Drawable> images = new ArrayList<>();
-        images.add(imageView.getDrawable());
+        //View nextChild = ((ViewGroup) v).getChildAt(1);
+        ImageView imageView = (ImageView)v;
         new StfalconImageViewer.Builder<>(this, images, new ImageLoader<Drawable>() {
             @Override
             public void loadImage(ImageView imageView, Drawable image) {
