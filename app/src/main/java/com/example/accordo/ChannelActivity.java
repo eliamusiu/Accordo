@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.text.method.TextKeyListener;
 import android.util.Log;
@@ -15,15 +18,20 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toolbar;
 
-import com.android.volley.toolbox.ImageLoader;
+import com.bumptech.glide.Glide;
+import com.stfalcon.imageviewer.StfalconImageViewer;
+import com.stfalcon.imageviewer.loader.ImageLoader;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ChannelActivity extends AppCompatActivity implements OnRecyclerViewClickListener {
     private final String TAG = ChannelActivity.class.toString();
@@ -132,12 +140,19 @@ public class ChannelActivity extends AppCompatActivity implements OnRecyclerView
     @Override
     public void onRecyclerViewClick(View v, int position) {
         // TODO: gestire l'apertura dell'immagine o della posizione
-        new StfalconImageViewer.Builder<>(context, images, new ImageLoader<String>() {
+        View nextChild = ((ViewGroup) v).getChildAt(1);
+        ImageView imageView = (ImageView)nextChild;
+        //Glide.with(this).load(((BitmapDrawable)imageView.getDrawable()).getBitmap()).into(imageView);
+        List<Drawable> images = new ArrayList<>();
+        images.add(imageView.getDrawable());
+        new StfalconImageViewer.Builder<>(this, images, new ImageLoader<Drawable>() {
             @Override
-            public void loadImage(ImageView imageView, String imageUrl) {
-                Glide.with(context).load(imageUrl).into(imageView)
+            public void loadImage(ImageView imageView, Drawable image) {
+                Glide.with(getApplicationContext())
+                        .load(image)
+                        .into(imageView);
             }
-        }).show();
+        }).withTransitionFrom(imageView).show();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
