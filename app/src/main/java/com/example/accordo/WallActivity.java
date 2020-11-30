@@ -85,14 +85,14 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         cc.register(response -> {
             try {
                 setSharedPreference((String) response.get("sid"));
+                // TODO: fare tost per avvisare l'ottnimento del sid
                 getWall();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             Log.d(TAG, "request correct: " + response.toString());
-        }, error -> {
-            Log.d(TAG, "request error: " + error.toString());
-        });
+        }, error -> Log.d(TAG, "request error: " + error.toString())
+        );
     }
 
     private void getWall() {
@@ -125,7 +125,8 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
     @Override
     public void onRecyclerViewClick(View v, int position) {
         Intent intent = new Intent(getApplicationContext(), ChannelActivity.class);
-        intent.putExtra("channelIndex", position);
+        String ctitle = Model.getInstance().getChannel(position).getCtitle();
+        intent.putExtra("ctitle", ctitle);
         startActivity(intent);
     }
 }

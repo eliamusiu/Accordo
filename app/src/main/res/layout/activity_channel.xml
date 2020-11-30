@@ -50,15 +50,24 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/sendButton" />
+            app:layout_constraintRight_toLeftOf="@+id/attachButton" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/attachButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_round_attach_file_24"
+            app:layout_constraintLeft_toRightOf="@+id/postEditText"
+            app:layout_constraintRight_toLeftOf="@id/sendButton"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_round_send_24"
-            app:layout_constraintLeft_toRightOf="@+id/postEditText"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/attachButton"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

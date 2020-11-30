@@ -16,4 +16,6 @@
     <string name="menu_refresh">Aggiorna</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="attach_image">Immagine</string>
+    <string name="attach_location">Posizione</string>
 </resources>
