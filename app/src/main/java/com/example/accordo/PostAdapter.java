@@ -12,9 +12,9 @@ import java.util.ArrayList;
 
 public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private LayoutInflater inflater;
-    private OnRecyclerViewClickListener recyclerViewClickListener;
+    private OnPostRecyclerViewClickListener recyclerViewClickListener;
 
-    public PostAdapter(Context context, OnRecyclerViewClickListener recyclerViewClickListener) {
+    public PostAdapter(Context context, OnPostRecyclerViewClickListener recyclerViewClickListener) {
         this.inflater = LayoutInflater.from(context);
         this.recyclerViewClickListener = recyclerViewClickListener;
     }

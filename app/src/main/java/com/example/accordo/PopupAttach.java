@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,39 +39,21 @@ public class PopupAttach {
         PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
         //Set the location of the window on the screen
-        Rect location = locateView(newPostView);
-        int yOffset = getScreenHeight(context) - location.top;
         popupWindow.setBackgroundDrawable(new ColorDrawable(Color.GRAY));
-        popupWindow.showAtLocation(view, Gravity.BOTTOM|Gravity.RIGHT, 0, yOffset + newPostView.getHeight());
-        popupWindow.setAnimationStyle(android.R.anim.fade_in);
+        popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        popupWindow.showAsDropDown(newPostView, 0, -newPostView.getHeight() - popupView.getMeasuredHeight(), Gravity.RIGHT);
 
-        //Initialize the elements of our window, install the handler
+        popupWindow.setAnimationStyle(android.R.anim.fade_in);
 
         //Handler for clicking
         popupView.findViewById(R.id.attachImageButton).setOnClickListener(v -> {
             popupWindow.dismiss();
-            ((ChannelActivity)context).onClick();
+            ((ChannelActivity)context).onClick("i");
         });
-    }
 
-    public static Rect locateView(View v)
-    {
-        int[] loc_int = new int[2];
-        v.getLocationOnScreen(loc_int);
-        Rect location = new Rect();
-        location.left = loc_int[0];
-        location.top = loc_int[1];
-        location.right = location.left + v.getWidth();
-        location.bottom = location.top + v.getHeight();
-        return location;
-    }
-
-    private static int getScreenHeight(Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
-
-        return metrics.heightPixels;
+        popupView.findViewById(R.id.attachLocationButton).setOnClickListener(v -> {
+            popupWindow.dismiss();
+            ((ChannelActivity)context).onClick("l");
+        });
     }
 }
