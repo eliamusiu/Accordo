@@ -41,11 +41,11 @@ public class ImagePickActivity extends AppCompatActivity {
 
         String optionSelected = getIntent().getStringExtra("optionSelected");
 
-        if (optionSelected.equals("Take Photo")) {
+        if (optionSelected.equals("Scatta una foto")) {
             Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(takePicture, ACTION_REQUEST_CAMERA);
 
-        } else if (optionSelected.equals("Choose from Gallery")) {
+        } else if (optionSelected.equals("Scegli dalla galleria")) {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
             startActivityForResult(Intent.createChooser(intent, "Scegli immagine"), ACTION_REQUEST_GALLERY);

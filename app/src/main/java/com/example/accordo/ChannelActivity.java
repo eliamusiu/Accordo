@@ -210,13 +210,13 @@ public class ChannelActivity extends AppCompatActivity implements OnRecyclerView
     }
 
     public void selectImage(Context context) {
-        final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
+        final CharSequence[] options = { "Scatta una foto", "Scegli dalla galleria", "Annulla" };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ChannelActivity.this);
-        builder.setTitle("Choose your profile picture");
+        builder.setTitle("Scegli");
 
         builder.setItems(options, (dialog, item) -> {
-            if (options[item].equals("Cancel")) {
+            if (options[item].equals("Annulla")) {
                 dialog.dismiss();
             } else {
                 Intent intent = new Intent(ChannelActivity.this, ImagePickActivity.class);
