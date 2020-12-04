@@ -156,7 +156,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
     public void onRecyclerViewImageClick(View v, int position) {
         ImageView contentImageView = (ImageView)v;
         String imageContent = ((TextImagePost)Model.getInstance().getPost(position)).getContent();
-        int imagePosition = Utils.getBitmapPositionInList(images, Utils.getBitmapFromBase64(imageContent));
+        int imagePosition = Utils.getBitmapPositionInList(images, Utils.getBitmapFromBase64(imageContent));     // TODO: se le immagini sono doppie prende sempre la prima
         new StfalconImageViewer.Builder<>(this, images, new ImageLoader<Bitmap>() {
             @Override
             public void loadImage(ImageView imageView, Bitmap image) {

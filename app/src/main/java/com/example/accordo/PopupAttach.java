@@ -43,7 +43,7 @@ public class PopupAttach {
         popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         popupWindow.showAsDropDown(newPostView, 0, -newPostView.getHeight() - popupView.getMeasuredHeight(), Gravity.RIGHT);
 
-        popupWindow.setAnimationStyle(android.R.anim.fade_in);
+        //popupWindow.setAnimationStyle(android.R.anim.fade_in);
 
         //Handler for clicking
         popupView.findViewById(R.id.attachImageButton).setOnClickListener(v -> {
