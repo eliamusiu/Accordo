@@ -182,17 +182,24 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_refresh) {
+            postsSwipeRefreshLayout.setRefreshing(true);
+            getPosts();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+        /*
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 postsSwipeRefreshLayout.setRefreshing(true);
                 getPosts();
                 return true;
-
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
-        }
+        }*/
     }
 
     /* Click su tipo allegato (immagine o posizione) nel popupmenu */
@@ -210,12 +217,9 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         }
     }
 
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //ImageView imageView = (ImageView) findViewById(R.id.pickedImageImageView);
         if (resultCode != RESULT_CANCELED && resultCode == RESULT_OK && requestCode == ACTION_REQUEST_GALLERY) {
             startImagePickActivity(data.getData());
         }

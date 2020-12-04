@@ -124,4 +124,15 @@ public class CommunicationController {
         JsonObjectRequest request = new JsonObjectRequest(url, jsonBody, responseListener, errorListener);
         requestQueue.add(request);
     }
+
+    public void getUserPicture(String uid, Response.Listener<JSONObject> responseListener, Response.ErrorListener errorListener) throws JSONException {
+        final String serviceUrl = "getUserPicture.php";
+        final String url = BASE_URL + serviceUrl;
+        final JSONObject jsonBody = new JSONObject();
+        jsonBody.put("sid", sid);
+        jsonBody.put("uid", uid);
+
+        JsonObjectRequest request = new JsonObjectRequest(url, jsonBody, responseListener, errorListener);
+        requestQueue.add(request);
+    }
 }
