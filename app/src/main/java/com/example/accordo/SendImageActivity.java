@@ -46,15 +46,10 @@ public class SendImageActivity extends AppCompatActivity {
             CommunicationController cc = new CommunicationController(this);
             try {
                 cc.addPost(ctitle, base64Image, "i",
-                        response -> {
-                            super.onBackPressed();
-                            /*Intent channelActivityIntent = new Intent(ImagePickActivity.this, ChannelActivity.class);
-                            channelActivityIntent.putExtra("ctitle", ctitle);
-                            startActivity(channelActivityIntent);*/
-                        },
+                        response -> super.onBackPressed(),
                         error -> {
                             Context context = getApplicationContext();
-                            CharSequence text = "Errore invio immagine";
+                            CharSequence text = "Errore invio immagine"; //TODO: fare strings
                             int duration = Toast.LENGTH_LONG;
                             Toast toast = Toast.makeText(context, text, duration);toast.show();
                             Log.e(TAG, "Errore invio immagine: " + error.networkResponse);

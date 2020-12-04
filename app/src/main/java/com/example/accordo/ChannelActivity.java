@@ -202,15 +202,15 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
             intent.setType("image/*");
             startActivityForResult(Intent.createChooser(intent, "Scegli immagine"), 1);
         } else if (type.equals("l")){
-            sendLocation();
+            Intent intent = new Intent(ChannelActivity.this, SendLocationActivity.class);
+            intent.putExtra("ctitle", ctitle);
+            startActivity(intent);
         } else {
             Log.d(TAG, "no good");
         }
     }
 
-    public void sendLocation() {
 
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
