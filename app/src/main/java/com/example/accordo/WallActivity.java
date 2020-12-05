@@ -33,8 +33,8 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
 
         // Accesso implicito
         setSidFromSharedPreferences();      // Prende il sid dalle shared preferences
-        if (Model.getInstance().getSid() == null ||                                 // Se non c'è il sid
-                Model.getInstance().getSid().equals("no")) {                        // o se è il default value
+        if (Model.getInstance(this).getSid() == null ||                                 // Se non c'è il sid
+                Model.getInstance(this).getSid().equals("no")) {                        // o se è il default value
             getSid();                       // Richiesta di rete per ottenere il sid
         } else {                                                                    // Se c'è
             getWall();
@@ -70,14 +70,14 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(getString(R.string.preference_file_sid), sid);
-        Model.getInstance().setSid(sid);
+        Model.getInstance(this).setSid(sid);
         editor.apply();
     }
 
     private void setSidFromSharedPreferences() {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         String defaultValue = getResources().getString(R.string.preference_file_sid_default_value);
-        Model.getInstance().setSid(sharedPref.getString(getString(R.string.preference_file_sid), defaultValue));
+        Model.getInstance(this).setSid(sharedPref.getString(getString(R.string.preference_file_sid), defaultValue));
     }
 
     private void getSid() {
@@ -102,7 +102,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
                     // TODO: fare metodo separato
                     response -> {
                         try {
-                            Model.getInstance().addChannels(response);
+                            Model.getInstance(this).addChannels(response);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -125,7 +125,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
     @Override
     public void onRecyclerViewClick(View v, int position) {
         Intent intent = new Intent(getApplicationContext(), ChannelActivity.class);
-        String ctitle = Model.getInstance().getChannel(position).getCtitle();
+        String ctitle = Model.getInstance(this).getChannel(position).getCtitle();
         intent.putExtra("ctitle", ctitle);
         startActivity(intent);
     }

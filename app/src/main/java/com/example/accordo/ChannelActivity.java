@@ -35,6 +35,8 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
     SwipeRefreshLayout postsSwipeRefreshLayout;
     private List<Bitmap> images = new ArrayList<>();
     private static final int ACTION_REQUEST_GALLERY = 1;
+    private PostAdapter adapter;
+    private RecyclerView rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,8 +90,10 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
             cc.getPosts(ctitle,
                     response -> {
                         try {
-                            Model.getInstance().addPosts(response);
-                            getImages();
+                            Model.getInstance(this).addPosts(response);     // Setta i post testo
+                            setRecyclerView();
+                            getUserPictures();                              // Setta le immagini profilo degli utenti
+                            getImages();                                    // Setta i post immagine
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -100,14 +104,21 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         }
     }
 
-    //richiesta di rete per prendere le immagini
+    private void getUserPictures() {
+        ProfilePictureController ppc = new ProfilePictureController(this, adapter, new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyData();
+            }
+        });
+    }
+
+    // Richiesta di rete per prendere le immagini
     private void getImages() throws JSONException {
         images.clear();
         cc = new CommunicationController(this);
-        ArrayList<TextImagePost> imagePosts = Model.getInstance().getAllImagePosts();
-        if (imagePosts.size() == 0) { // se non ci sono post con immagini, viene settata la recycler view direttamente
-            setRecyclerView();
-        } else {
+        ArrayList<TextImagePost> imagePosts = Model.getInstance(this).getAllImagePosts();
+
             for (TextImagePost post : imagePosts) {
                 cc.getPostImage(post.getPid(),
                         reponse -> {
@@ -115,9 +126,10 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                                 String content = reponse.getString("content");
                                 post.setContent(content);
                                 images.add(Utils.getBitmapFromBase64(content));
+                                adapter.notifyData();
                                 if (imagePosts.indexOf(post) == (imagePosts.size() - 1)) { // se è l'ultimo post con immagine viene settata la recycler view
-                                    setRecyclerView();
                                     Collections.reverse(images);
+                                    rv.scrollToPosition(0);
                                     postsSwipeRefreshLayout.setRefreshing(false);
                                 }
                             } catch (JSONException e) {
@@ -127,7 +139,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                         error -> Log.d(TAG, "request error: " + error.toString())
                 );
             }
-        }
+
     }
 
     private void addPost() throws JSONException {
@@ -142,20 +154,20 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
     }
 
     private void setRecyclerView() {
-        RecyclerView rv = findViewById(R.id.postsRecyclerView);
+        rv = findViewById(R.id.postsRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         rv.setLayoutManager(linearLayoutManager);
         rv.scrollToPosition(0);
-        PostAdapter adapter = new PostAdapter(this, this);
+        adapter = new PostAdapter(this, this);
         rv.setAdapter(adapter);
     }
 
     @Override
     public void onRecyclerViewImageClick(View v, int position) {
         ImageView contentImageView = (ImageView)v;
-        String imageContent = ((TextImagePost)Model.getInstance().getPost(position)).getContent();
+        String imageContent = ((TextImagePost)Model.getInstance(this).getPost(position)).getContent();
         int imagePosition = Utils.getBitmapPositionInList(images, Utils.getBitmapFromBase64(imageContent));     // TODO: se le immagini sono doppie prende sempre la prima
         new StfalconImageViewer.Builder<>(this, images, new ImageLoader<Bitmap>() {
             @Override

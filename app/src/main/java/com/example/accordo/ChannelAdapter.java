@@ -15,10 +15,12 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private LayoutInflater inflater;
     private OnRecyclerViewClickListener recyclerViewClickListener;
     private String mSections = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private Context context;
 
     public ChannelAdapter(Context context, OnRecyclerViewClickListener recyclerViewClickListener) {
         this.inflater = LayoutInflater.from(context);
         this.recyclerViewClickListener = recyclerViewClickListener;
+        this.context = context;
     }
 
     @NonNull
@@ -32,13 +34,13 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ChannelViewHolder viewHolder = (ChannelViewHolder) holder;
-        viewHolder.updateContent(Model.getInstance().getChannel(position));
+        viewHolder.updateContent(Model.getInstance(context).getChannel(position));
 
     }
 
     @Override
     public int getItemCount() {
-        return Model.getInstance().getChannelsSize();
+        return Model.getInstance(context).getChannelsSize();
     }
 
 }

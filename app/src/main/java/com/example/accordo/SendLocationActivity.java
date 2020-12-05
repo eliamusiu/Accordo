@@ -139,8 +139,8 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
     }
 
     private void setCameraAtPostPosition(int index) {
-        String lat = ((LocationPost) Model.getInstance().getPost(index)).getLat();
-        String lon = ((LocationPost) Model.getInstance().getPost(index)).getLon();
+        String lat = ((LocationPost) Model.getInstance(this).getPost(index)).getLat();
+        String lon = ((LocationPost) Model.getInstance(this).getPost(index)).getLon();
 
         Double dLat = Double.valueOf(lat);
         Double dLon = Double.valueOf(lon);

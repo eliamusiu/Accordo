@@ -1,7 +1,21 @@
 package com.example.accordo;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class User {
-    private String uid, pversion, picture;
+    @PrimaryKey
+    @NonNull
+    private String uid;
+
+    @ColumnInfo(name = "pversion")
+    private String pversion;
+
+    @ColumnInfo(name = "picture")
+    private String picture;
 
     public String getUid() {
         return uid;

@@ -13,11 +13,12 @@ import org.json.JSONObject;
 
 public class CommunicationController {
     private static final String BASE_URL = "https://ewserver.di.unimi.it/mobicomp/accordo/";
-    private final String sid = Model.getInstance().getSid();
+    private final String sid;
     private RequestQueue requestQueue = null;
 
     public CommunicationController(Context context) {
         requestQueue = Volley.newRequestQueue(context);
+        sid = Model.getInstance(context).getSid();
     }
 
     // TODO: mettere assert nelle richieste

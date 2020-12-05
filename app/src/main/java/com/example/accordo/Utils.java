@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Utils {
 
-    public static Bitmap getBitmapFromBase64(String base64) {
+    public static Bitmap getBitmapFromBase64(String base64) {       // TODO: gestire errore "java.lang.IllegalArgumentException: bad base-64"
         byte[] decodedString = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         return decodedByte;

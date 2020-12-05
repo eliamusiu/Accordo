@@ -1,5 +1,10 @@
 package com.example.accordo;
 
+import android.content.Context;
+import android.os.Handler;
+
+import androidx.room.Room;
+
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -7,22 +12,28 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Model {
     private static Model instance = null;
+    private static AppDatabase db = null;
     private ArrayList<Channel> channels = null;
-    private ArrayList<Post> posts = null;   // TODO: istanziare nel costruttore
+    private ArrayList<Post> posts = null;
+    private List<User> users = null;
     private String sid = null;
     private String uid = null;
 
-    private Model() {
-        channels = new ArrayList<Channel>();
-        posts = new ArrayList<Post>();
+    private Model(Context context) {
+        channels = new ArrayList<>();
+        posts = new ArrayList<>();
+        users = new ArrayList<>();
+        db = Room.databaseBuilder(context,
+                AppDatabase.class, "Users").build();
     }
 
-    public static synchronized Model getInstance() {
+    public static synchronized Model getInstance(Context context) {
         if (instance == null) {
-            instance = new Model();
+            instance = new Model(context);
         }
         return instance;
     }
@@ -98,6 +109,43 @@ public class Model {
             }
         }
         return textImagePosts;
+    }
+
+    public void setUsersFromDB() {
+        users = db.userDao().getAllUsers();
+    }
+
+    public User getUser(String uid) {
+        return users.stream()
+                .filter(user -> uid.equals(user.getUid()))
+                .findAny()
+                .orElse(null);
+    }
+
+    public void updateUser(String uid, String pversion, String picture) {
+        (new Thread(new Runnable(){
+            public void run() {
+                db.userDao().updateUser(uid, pversion, picture);
+                //setUsersFromDB();
+            }
+        })).start();
+        getUser(uid).setPversion(pversion);
+        getUser(uid).setPicture(picture);
+    }
+
+    public void addUser(String uid, String pversion, String picture) {
+        final Handler handler = new Handler();
+        User user = new User();
+        user.setUid(uid);
+        user.setPversion(pversion);
+        user.setPicture(picture);
+        (new Thread(new Runnable(){
+            public void run() {
+                db.userDao().insertUser(user);
+                //setUsersFromDB();
+            }
+        })).start();
+        users.add(user);
     }
 
     public Channel getChannel(int index) {
