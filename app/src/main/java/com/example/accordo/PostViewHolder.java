@@ -1,13 +1,9 @@
 package com.example.accordo;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,7 +12,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     private ImageView contentImageView, profileImageView;
     private LinearLayout locationLinearLayout;
     private OnPostRecyclerViewClickListener recyclerViewClickListener;
-
 
     public PostViewHolder(@NonNull View itemView, OnPostRecyclerViewClickListener recyclerViewClickListener) {
         super(itemView);
@@ -31,10 +26,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     /**
      * Aggiorna le view dei post di tipo testo
      * @param post Post che si vuole mostrare nella riga della recyclerView
-     * @param picture Immagine del profilo dell'autore codificata in base64 (o null, se non c'è)
      */
-    public void updateContent(Post post, String picture) {
-        setUserInfo(post.getName(), picture);
+    public void updateContent(Post post) {
         TextImagePost tiPost = (TextImagePost) post;
         contentTextView.setText(tiPost.getContent());
     }
@@ -42,10 +35,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     /**
      * Aggiorna le view dei post di tipo immagine
      * @param post Post che si vuole mostrare nella riga della recyclerView
-     * @param picture Immagine del profilo dell'autore codificata in base64 (o null, se non c'è)
      */
-    public void updateContent(TextImagePost post, String picture) {
-        setUserInfo(post.getName(), picture);
+    public void updateContent(TextImagePost post) {
         if (post.getContent() != null) {
             contentImageView.setImageBitmap(Utils.getBitmapFromBase64(post.getContent()));
             contentImageView.setOnClickListener(this::onImageClick);
@@ -53,28 +44,31 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * Aggiorna le view dei post di tipo posizione
-     * @param post Post che si vuole mostrare nella riga della recyclerView
-     * @param picture Immagine del profilo dell'autore codificata in base64 (o null, se non c'è)
+     * Setta il click listener del {@link LinearLayout} del post di tipo posizione
      */
-    public void updateContent(LocationPost post, String picture) {
-        setUserInfo(post.getName(), picture);
+    public void updateContent() {
         locationLinearLayout.setOnClickListener(this::onLocationClick);
     }
 
     /**
-     * Aggiorna la {@link TextView} del nome dell'autore e l'{@link ImageView} dell'immagine del
-     * profilo dell'autore
+     * Aggiorna la {@link TextView} del nome dell'autore con quello passato e, se null, imposta
+     * il nome di default ("autore sconosciuto")
      * @param name Nome dell'autore (o null, se non c'è)
-     * @param picture Immagine dell'autore codificata in base64 (o null, se non c'è)
      */
-    private void setUserInfo(String name, String picture) {
+    public void setUserName(String name) {
         if (name != null) {                   // Se c'è il nome dell'autore lo setta
             authorTextView.setText(name);
+        } else {
+            authorTextView.setText(R.string.unknown_author);
         }
-        if (picture != null) {                          // Se c'è l'immagine di profilo la setta
-            profileImageView.setImageBitmap(Utils.getBitmapFromBase64(picture));
-        }
+    }
+
+    /**
+     * Setta l'{@link ImageView} dell'immagine del profilo dell'autore
+     * @param picture Immagine base64 da settare
+     */
+    public void setProfilePicture(String picture) {
+        profileImageView.setImageBitmap(Utils.getBitmapFromBase64(picture));
     }
 
     public void onImageClick(View v) {

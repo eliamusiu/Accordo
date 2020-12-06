@@ -47,11 +47,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return null;
     }
 
-    /**
-     * In base al ViewType ritornato in {@link #getItemViewType(int)} chiama un metodo del
-     * {@link PostViewHolder} diverso per tipo di post. Ottiene da {@link Model#getPost(int)}
-     * il {@link Post} e da {@link Model#getUser(String)} lo {@link User} per prendere la sua
-     * immagine profilo da passare al {@link PostViewHolder}
+    /** TODO: modificare doc
+     * Ottiene da {@link Model#getPost(int)} il {@link Post} e da {@link Model#getUser(String)}
+     * lo {@link User} per prendere la sua immagine di profilo da passare al {@link PostViewHolder}.
+     * Chiama {@link PostViewHolder#setUserName(String)},
+     * {@link #updateViewHolder(PostViewHolder, Post)} e
+     * {@link PostViewHolder#setProfilePicture(String)}
      * @param holder
      * @param position
      */
@@ -59,20 +60,33 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Post post = Model.getInstance(context).getPost(position);
         User postAuthor = Model.getInstance(context).getUser(post.getUid());
-        String picture = null;
+        PostViewHolder viewHolder = (PostViewHolder)holder;
+
+        viewHolder.setUserName(post.getName());
+        updateViewHolder(viewHolder, post);
         if (postAuthor != null) {
-            picture = postAuthor.getPicture();
+            if (!postAuthor.getPversion().equals("null")) {
+                viewHolder.setProfilePicture(postAuthor.getPicture());
+            }
         }
-        PostViewHolder viewHolder = (PostViewHolder) holder;
-        switch (holder.getItemViewType()) {
+    }
+
+    /**
+     * In base al ViewType ritornato in {@link #getItemViewType(int)} chiama un metodo del
+     * {@link PostViewHolder} diverso per tipo di post.
+     * @param viewHolder
+     * @param post
+     */
+    private void updateViewHolder(PostViewHolder viewHolder, Post post) {
+        switch (viewHolder.getItemViewType()) {
             case POST_TYPE_TEXT:
-                viewHolder.updateContent(post, picture);
+                viewHolder.updateContent(post);
                 break;
             case POST_TYPE_IMAGE:
-                viewHolder.updateContent((TextImagePost) post, picture);
+                viewHolder.updateContent((TextImagePost) post);
                 break;
             case POST_TYPE_LOCATION:
-                viewHolder.updateContent((LocationPost) post, picture);
+                viewHolder.updateContent();
                 break;
         }
     }

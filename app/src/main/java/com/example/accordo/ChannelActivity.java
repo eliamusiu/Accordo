@@ -141,7 +141,6 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                     error -> Log.d(TAG, "request error: " + error.toString())
             );
         }
-
     }
 
     /**
