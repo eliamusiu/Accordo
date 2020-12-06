@@ -14,7 +14,6 @@ import java.util.ArrayList;
 public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private LayoutInflater inflater;
     private OnRecyclerViewClickListener recyclerViewClickListener;
-    private String mSections = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private Context context;
 
     public ChannelAdapter(Context context, OnRecyclerViewClickListener recyclerViewClickListener) {

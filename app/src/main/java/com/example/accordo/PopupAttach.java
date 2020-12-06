@@ -24,33 +24,30 @@ import static androidx.core.app.ActivityCompat.startActivityForResult;
 public class PopupAttach {
 
     public void showPopupWindow(final View view, View newPostView, Context context) {
-        //Create a View object yourself through inflater
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.attach_popup, null);
 
-        //Specify the length and width through constants
+        // Specifica la larghezza e l'altezza mediante costanti
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-
-        //Make Inactive Items Outside Of PopupWindow
-        boolean focusable = true;
+        boolean focusable = true;       // Rende inattivi gli elementi al di fuori del popup
 
         //Create a window with our parameters
         PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        //Set the location of the window on the screen
         popupWindow.setBackgroundDrawable(new ColorDrawable(Color.GRAY));
+
+        // Imposta la posizione del popup sullo schermo
         popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         popupWindow.showAsDropDown(newPostView, 0, -newPostView.getHeight() - popupView.getMeasuredHeight(), Gravity.RIGHT);
-
         //popupWindow.setAnimationStyle(android.R.anim.fade_in);
 
-        //Handler for clicking
+        // Gestore evento di click su bottone allega immagine
         popupView.findViewById(R.id.attachImageButton).setOnClickListener(v -> {
             popupWindow.dismiss();
             ((ChannelActivity)context).onAttachClick("i");
         });
 
+        // Gestore evento di click su bottone allega posizione
         popupView.findViewById(R.id.attachLocationButton).setOnClickListener(v -> {
             popupWindow.dismiss();
             ((ChannelActivity)context).onAttachClick("l");

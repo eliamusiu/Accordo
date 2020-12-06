@@ -35,7 +35,7 @@ public class SendImageActivity extends AppCompatActivity {
             String base64Image = Utils.getBase64FromBitmap(imageBitmap);
             CommunicationController cc = new CommunicationController(this);
             try {
-                cc.addPost(ctitle, base64Image, "i",
+                cc.addPost(ctitle, base64Image, Post.IMAGE,
                         response -> super.onBackPressed(),
                         error -> {
                             Context context = getApplicationContext();

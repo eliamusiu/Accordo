@@ -23,6 +23,10 @@ public class Model {
     private String sid = null;
     private String uid = null;
 
+    /**
+     * Costruttore che istanzia le liste e costruisce il database
+     * @param context
+     */
     private Model(Context context) {
         channels = new ArrayList<>();
         posts = new ArrayList<>();
@@ -31,6 +35,11 @@ public class Model {
                 AppDatabase.class, "Users").build();
     }
 
+    /**
+     * Ritorna l'istanza di {@link Model} che è un Singleton
+     * @param context
+     * @return
+     */
     public static synchronized Model getInstance(Context context) {
         if (instance == null) {
             instance = new Model(context);
@@ -38,6 +47,11 @@ public class Model {
         return instance;
     }
 
+    /**
+     * Trasforma il JSON in un oggetto di tipo {@link Channel} e lo aggiunge a {@link #channels}
+     * @param wallJson Json contenente i canali
+     * @throws JSONException
+     */
     public void addChannels(JSONObject wallJson) throws JSONException {
         channels.clear();
         Gson gson = new Gson();
@@ -49,6 +63,11 @@ public class Model {
         }
     }
 
+    /**
+     * Trasforma il JSON in un oggetto di tipo {@link Post} e lo aggiunge a {@link #posts}
+     * @param channelJson Json contenente i post
+     * @throws JSONException
+     */
     public void addPosts(JSONObject channelJson) throws JSONException {
         posts.clear();
         Gson gson = new Gson();
@@ -66,6 +85,7 @@ public class Model {
         }
     }
 
+    // TODO: Togliere se non lo useremo mai
     public void addPost(String uid, String name, String pversion, String pid, String type, String content) {
         TextImagePost post = new TextImagePost();
         post.setUid(uid);
@@ -81,6 +101,7 @@ public class Model {
         this.sid = sid;
     }
 
+    // TODO: togliere?
     public void setUid(String uid) {
         this.uid = uid;
     }
@@ -89,18 +110,28 @@ public class Model {
         return sid;
     }
 
+    // TODO: togliere?
     public  String getUid() {
         return uid;
     }
 
+    // TODO: togliere?
     public ArrayList<Channel> getAllChannels() {
         return channels;
     }
 
+    /**
+     * Ritorna tutti i post del canale attuale
+     * @return Tutti i post del canale attuale
+     */
     public ArrayList<Post> getAllPosts() {
         return posts;
     }
 
+    /**
+     * Ritorna tutti i post di tipo immagine del canale attuale
+     * @return Tutti i post di tipo immagine del canale attuale
+     */
     public ArrayList<TextImagePost> getAllImagePosts() {
         ArrayList<TextImagePost> textImagePosts = new ArrayList<>();
         for (Post post : posts) {
@@ -111,10 +142,18 @@ public class Model {
         return textImagePosts;
     }
 
+    /**
+     * Prende gli utenti nel database e li salva in {@link #users}
+     */
     public void setUsersFromDB() {
         users = db.userDao().getAllUsers();
     }
 
+    /**
+     * Ritorna l'utente specificato
+     * @param uid Utente che si vuole ottenere
+     * @return Utente con l'uid passato
+     */
     public User getUser(String uid) {
         return users.stream()
                 .filter(user -> uid.equals(user.getUid()))
@@ -122,36 +161,47 @@ public class Model {
                 .orElse(null);
     }
 
+    /**
+     * Aggiorna l'utente nel database con i parametri specificati
+     * @param uid
+     * @param pversion
+     * @param picture Immagine codificata in base64
+     */
     public void updateUser(String uid, String pversion, String picture) {
-        (new Thread(new Runnable(){
-            public void run() {
-                db.userDao().updateUser(uid, pversion, picture);
-                //setUsersFromDB();
-            }
-        })).start();
+        (new Thread(() -> db.userDao().updateUser(uid, pversion, picture))).start();
         getUser(uid).setPversion(pversion);
         getUser(uid).setPicture(picture);
     }
 
+    /**
+     * Istanzia un {@link User} con i parametri specificati e lo aggiunge al database
+     * @param uid
+     * @param pversion
+     * @param picture Immagine codificata in base64
+     */
     public void addUser(String uid, String pversion, String picture) {
-        final Handler handler = new Handler();
         User user = new User();
         user.setUid(uid);
         user.setPversion(pversion);
         user.setPicture(picture);
-        (new Thread(new Runnable(){
-            public void run() {
-                db.userDao().insertUser(user);
-                //setUsersFromDB();
-            }
-        })).start();
+        (new Thread(() -> db.userDao().insertUser(user))).start();
         users.add(user);
     }
 
+    /**
+     * Ritorna il canale alla posizione specificata
+     * @param index
+     * @return
+     */
     public Channel getChannel(int index) {
         return channels.get(index);
     }
 
+    /**
+     * Ritorna il post alla posizione specificata
+     * @param index
+     * @return
+     */
     public Post getPost(int index) {
         return posts.get(index);
     }

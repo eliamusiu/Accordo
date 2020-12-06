@@ -31,39 +31,39 @@ public class AddChannelFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        // Setta l'interfaccia
         builder.setTitle("Nuovo canale");
         builder.setView(R.layout.fragment_add_channel);
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_add_channel, null);
         builder.setView(view);
 
-        builder.setPositiveButton("Aggiungi", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Richiesta di rete
-                CommunicationController cc = new CommunicationController(getContext());
-                final EditText et = view.findViewById(R.id.ctitleTextView);
-                String ctitle = et.getText().toString();
-
-                try {
-                    cc.addChannel(ctitle,
-                            response -> Log.d(TAG, "Canale creato"), //TODO: visualizzare messaggio
-                            error -> Log.d(TAG, "Errore creazione canale: " + error.toString())
-                    );
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                dismiss();
-            }
-        });
-
-        builder.setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dismiss();
-            }
-        });
+        // Gestori eventi sui pulsanti del dialog
+        builder.setPositiveButton("Aggiungi", (dialog, which) -> addChannel(view));
+        builder.setNegativeButton("Annulla", (dialog, which) -> dismiss());
 
         return builder.create();
+    }
+
+    /**
+     * Fa la richiesta di rete del {@link CommunicationController} prendendo il nome del canale
+     * dalla EditText
+     * @param view
+     */
+    private void addChannel(View view) {
+        CommunicationController cc = new CommunicationController(getContext());
+        final EditText et = view.findViewById(R.id.ctitleTextView);
+        String ctitle = et.getText().toString();
+
+        try {
+            cc.addChannel(ctitle,
+                    response -> Log.d(TAG, "Canale creato"), //TODO: visualizzare messaggio
+                    error -> Log.d(TAG, "Errore creazione canale: " + error.toString())
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        dismiss();
     }
 }

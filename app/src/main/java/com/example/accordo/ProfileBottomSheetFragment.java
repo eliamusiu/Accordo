@@ -20,10 +20,10 @@ import org.json.JSONObject;
 public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
     public static final String TAG = ProfileBottomSheetFragment.class.toString();
     private CommunicationController cc;
-    ImageView profilePictureImageView;
-    EditText profileNameEditText;
-    Context context;
-    Bitmap croppedProfilePicBitmap = null;
+    private ImageView profilePictureImageView;
+    private EditText profileNameEditText;
+    private Context context;
+    private Bitmap croppedProfilePicBitmap = null;
 
     public ProfileBottomSheetFragment(Context context) {
         this.context = context;
@@ -42,7 +42,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Fa l'inflate del layout per questo fragment
         View view = inflater.inflate(R.layout.fragment_profile_bottom_sheet, container, false);
         profilePictureImageView = view.findViewById(R.id.userProfileImageView);
         profileNameEditText = view.findViewById(R.id.profileNameEditText);
@@ -51,7 +51,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         try {
             cc = new CommunicationController(getContext());
             cc.getProfile(response -> {
-                        setInterfaceProfileInfo(response);
+                        setProfileInfo(response);
                     },
                     error -> Log.e(TAG, "Errore richiesta: " + error));
         } catch (JSONException e) {
@@ -74,7 +74,11 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         return view;
     }
 
-    private void setInterfaceProfileInfo(JSONObject response) {
+    /**
+     * Inserisce il nome dell'utente nella EditText e l'immagine del profilo nella ImageView
+     * @param response Json contente "name" e "picture" del profilo
+     */
+    private void setProfileInfo(JSONObject response) {
         try {
             Object name = response.get("name");
             Object picture = response.get("picture");
@@ -89,6 +93,10 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         }
     }
 
+    /**
+     * Fa la richiesta di rete per aggiornare nome dell'utente e/o immagine profilo
+     * @throws JSONException
+     */
     private void editProfile() throws JSONException {
         String name = profileNameEditText.getText().toString();
         String base64Image = null;
@@ -102,6 +110,11 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
                 error -> Log.e(TAG, "Errore richiesta: " + error));     // TODO: Gestire errore 400 (nome già usato)
     }
 
+    /**
+     * Prende il bitmap dell'immagine, la fa diventare un quadrato (crop) e setta l'imageView del
+     * profilo con essa
+     * @param uri Uri dell'immagine di profilo
+     */
     public void setProfilePicture(Uri uri) {
         Bitmap bitmap = Utils.getBitmapFromUri(uri, context.getContentResolver());
         croppedProfilePicBitmap = Utils.cropImageToSquare(bitmap);

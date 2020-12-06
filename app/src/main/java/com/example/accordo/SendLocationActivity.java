@@ -46,11 +46,13 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
     private MapboxMap myMapboxMap;
     private LocationCallback locationCallback;
     private LatLng currentLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         createMap(savedInstanceState);
 
+        // Callback chiamata quando si cambia posizione. Sposta di conseguenza la camera
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -63,22 +65,20 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
                         currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                         setCameraPosition(currentLocation);
                         findViewById(R.id.sendLocationFab).setVisibility(View.VISIBLE);
-
                     } else {
-                        Log.d(TAG, "ultima posizione non disponibile");
+                        Log.d(TAG, "Ultima posizione non disponibile");
                     }
-
                 }
             }
         };
 
+        // Gestore evento di clik sul bottone di invio della posizione
         findViewById(R.id.sendLocationFab).setOnClickListener(v -> {
             CommunicationController cc = new CommunicationController(this);
             try {
                 cc.addPost(getIntent().getStringExtra("ctitle"),
                         String.valueOf(currentLocation.getLatitude()),
-                        String.valueOf(currentLocation.getLongitude()),
-                        "l",
+                        String.valueOf(currentLocation.getLongitude()), Post.LOCATION,
                         response -> super.onBackPressed(),
                         error -> {
                             Context context = getApplicationContext();
@@ -94,9 +94,13 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         });
     }
 
+    /**
+     * Prende la {@link MapView} e ne prende la mappa salvandola in {@link #myMapboxMap}.
+     * Chiama {@link #setMapBehavior()} e {@link #mapStyle()}
+     * @param savedInstanceState
+     */
     private void createMap(Bundle savedInstanceState) {
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
-
         setContentView(R.layout.activity_send_location);
 
         mapView = (MapView) findViewById(R.id.mapView);
@@ -105,30 +109,30 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 myMapboxMap = mapboxMap;
-                mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
-                        // Map is set up and the style has loaded. Now you can add data or make other map adjustments
-                    }
+                mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
+                    // Map is set up and the style has loaded. Now you can add data or make other map adjustments
                 });
-                //getLastLocation();      // Prende l'ultima posizione nota dell'utente e aggiorna la camera della mappa
-                setMapBehavior(); // in base al contenuto dell'intent viene mostrata la posizione attuale dell'utente o quella di un post
-                myMapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
-
-                        UiSettings uiSettings = myMapboxMap.getUiSettings();
-
-                        uiSettings.setCompassEnabled(true);
-                        uiSettings.setAllGesturesEnabled(true);
-                        uiSettings.setZoomGesturesEnabled(true);
-                        uiSettings.setQuickZoomGesturesEnabled(true);
-                    }
-                });
+                setMapBehavior();
+                myMapboxMap.setStyle(Style.MAPBOX_STREETS, style -> mapStyle());
             }
         });
     }
 
+    /**
+     * Imposta lo stile della mappa
+     */
+    private void mapStyle() {
+        UiSettings uiSettings = myMapboxMap.getUiSettings();
+
+        uiSettings.setCompassEnabled(true);
+        uiSettings.setAllGesturesEnabled(true);
+        uiSettings.setZoomGesturesEnabled(true);
+        uiSettings.setQuickZoomGesturesEnabled(true);
+    }
+
+    /**
+     * In base al contenuto dell'intent mostra la posizione attuale dell'utente o quella di un post
+     */
     private void setMapBehavior() {
         int index = getIntent().getIntExtra("postIndex", -1);
         if (index == -1) {
@@ -138,6 +142,10 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         }
     }
 
+    /**
+     * Prende latiudine e longitudine del post e chiama {@link #setCameraPosition(LatLng)}
+     * @param index Indice del post di tipo posizione che è stato cliccato
+     */
     private void setCameraAtPostPosition(int index) {
         String lat = ((LocationPost) Model.getInstance(this).getPost(index)).getLat();
         String lon = ((LocationPost) Model.getInstance(this).getPost(index)).getLon();
@@ -148,8 +156,12 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         setCameraPosition(new LatLng(dLat, dLon));
     }
 
+    /**
+     * Mette il marker (icona) sulla posizione
+     * @param latLng
+     */
     private void setMarker(LatLng latLng) {
-        IconFactory iconFactory = IconFactory.getInstance(SendLocationActivity.this);
+        IconFactory iconFactory = IconFactory.getInstance(SendLocationActivity.this);       // TODO: trovare metodi non deprecati
         Icon icon = iconFactory.fromResource(R.drawable.mapbox_marker_icon_default);
 
         // Add the marker to the map
@@ -165,6 +177,10 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         });
     }
 
+    /**
+     * Controlla i permessi di posizione e mostra il dialog per concederli nel caso in cui non sia
+     * già stato fatto. Se sono stati già concessi chiama {@link #setFusedLocation()}
+     */
     private void getLastLocation() {
         // L'utente non ha concesso i permessi
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -179,12 +195,22 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         }
     }
 
+    /**
+     * Inizializza il client provider per la posizione
+     */
     private void setFusedLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         requestingLocationUpdates = true;
         startLocationUpdates();
     }
 
+    /**
+     * Chiamato quando l'utente concede i permessi tramite il dialog, di conseguenza chiama
+     * {@link #setFusedLocation()}
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -200,6 +226,10 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         }
     }
 
+    /**
+     * Sposta la camera della mappa nella latitudine e longitudine specificati
+     * @param latLng
+     */
     private void setCameraPosition(LatLng latLng) {
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng)
@@ -211,10 +241,13 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         setMarker(latLng);
     }
 
+    /**
+     * Registrazione per ricevere gli aggiornamenti in tempo reale della posizione
+     */
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
         LocationRequest locationRequest = LocationRequest.create();     // Serve per specificare i parametri della richiesta di posizione
-        locationRequest.setInterval(1000); //in ms.
+        locationRequest.setInterval(1000);                              // Intervallo in millisecondi
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationClient.requestLocationUpdates(     // Fa partire il calcolo della posizione:
                 locationRequest,                        // 1) secondo questi parametri
@@ -228,6 +261,9 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         mapView.onStart();
     }
 
+    /**
+     * Fa ripartire gli aggiornamenti della posizione, se ci si era registrari per riceverli
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -237,12 +273,15 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         }
     }
 
+    /**
+     * Interrompe gli aggiornamenti della posizione, se ci si è registrati per riceverli
+     */
     @Override
     protected void onPause() {
         super.onPause();
         mapView.onPause();
         if (requestingLocationUpdates) {
-            fusedLocationClient.removeLocationUpdates(locationCallback);    // Interrompe gli aggiornamenti in background della posizione
+            fusedLocationClient.removeLocationUpdates(locationCallback);
             requestingLocationUpdates = false;
         }
     }

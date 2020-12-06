@@ -45,7 +45,6 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         }
 
         // Gestore evento sulla barra di navigazione (modifica profilo)
-
         ((BottomNavigationView)findViewById(R.id.bottom_navigation)).setOnNavigationItemSelectedListener( item -> {
                 if (item.getItemId() == R.id.profile_page) {
                     bottomSheetFragment = ProfileBottomSheetFragment.newInstance(this);
@@ -61,32 +60,32 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         });
 
         // Gestore evento swipe to refresh (aggiorna canali)
-        wallSwipeRefreshLayout = ((SwipeRefreshLayout)findViewById(R.id.wallSwiperefresh));
+        wallSwipeRefreshLayout = findViewById(R.id.wallSwiperefresh);
         wallSwipeRefreshLayout.setOnRefreshListener(
                 () -> getWall()
         );
     }
 
-    private void setSharedPreference(String sid) {
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.preference_file_sid), sid);
-        Model.getInstance(this).setSid(sid);
-        editor.apply();
-    }
-
+    /**
+     * Prende il sid dalla memoria (sharedPreferences) e lo salva nel model
+     */
     private void setSidFromSharedPreferences() {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         String defaultValue = getResources().getString(R.string.preference_file_sid_default_value);
         Model.getInstance(this).setSid(sharedPref.getString(getString(R.string.preference_file_sid), defaultValue));
     }
 
+    /**
+     * Fa la richiesta di rete per ottenere il sid, quando viene ricevuto, nella callback chiama
+     * {@link #setSharedPreference(String)} per salvarlo nelle sharedPreferences e chiama
+     * {@link #getWall()} per ottenere i canali
+     */
     private void getSid() {
         cc = new CommunicationController(this);
         cc.register(response -> {
             try {
                 setSharedPreference((String) response.get("sid"));
-                // TODO: fare tost per avvisare l'ottnimento del sid
+                // TODO: fare toast per avvisare l'ottnimento del sid
                 getWall();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -96,6 +95,22 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         );
     }
 
+    /**
+     * Salva il sid nelle sharedPreferences e nel Model
+     * @param sid sid da salvare nelle shared preferences e nel Model
+     */
+    private void setSharedPreference(String sid) {
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.preference_file_sid), sid);
+        Model.getInstance(this).setSid(sid);
+        editor.apply();
+    }
+
+    /**
+     * Fa richiesta di rete per ottenere i canali. Nella callback li aggiunge al model e chiama
+     * {@link #setRecyclerView()}
+     */
     private void getWall() {
         cc = new CommunicationController(this);
         try {
@@ -116,6 +131,9 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         }
     }
 
+    /**
+     * Setta la recyclerView: layout e adapter
+     */
     private void setRecyclerView() {
         RecyclerView rv = findViewById(R.id.wallRecyclerView);
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -123,6 +141,11 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         rv.setAdapter(adapter);
     }
 
+    /**
+     * Gestore evento di click su un elemento (canale) della recyclerView
+     * @param v Elemento della recyclerView (il viewHolder) che è stato cliccato
+     * @param position Posizione dell'elemento cliccato sulla lista
+     */
     @Override
     public void onRecyclerViewClick(View v, int position) {
         Intent intent = new Intent(getApplicationContext(), ChannelActivity.class);
@@ -131,13 +154,21 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         startActivity(intent);
     }
 
-    /* Mostra */
+    /**
+     * Mostra il file managaer per scegliere l'immagine profilo nel profileBottomSheetFragment
+     */
     public void onEditProfileImageClick() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         startActivityForResult(Intent.createChooser(intent, "Scegli immagine"), 1);
     }
 
+    /**
+     * Viene chiamata quando si è scelta l'immagine dal file manager
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

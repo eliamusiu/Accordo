@@ -1,5 +1,6 @@
 package com.example.accordo;
 
+import android.graphics.Typeface;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,8 +20,17 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
         this.recyclerViewClickListener = recyclerViewClickListener;
     }
 
+    /**
+     * Setta il testo di {@link #channelTitle} con il nome (titolo) del canale passato nella riga
+     * della recyclerView e la mette bold se il canale è stato creato dall'utente loggato
+     * @param channel Canale del quale si vuole mostrare il nome
+     */
     public void updateContent(Channel channel) {
         channelTitle.setText(channel.getCtitle());
+        /* TODO: mette in grassetto anche canali non nostri
+        if (channel.getMine().equals("t")) {
+            channelTitle.setTypeface(null, Typeface.BOLD);
+        }*/
     }
 
     public void onClick(View v) {

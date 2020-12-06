@@ -15,6 +15,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private LayoutInflater inflater;
     private OnPostRecyclerViewClickListener recyclerViewClickListener;
     private Context context;
+    private static final int POST_TYPE_TEXT = 1, POST_TYPE_IMAGE = 2, POST_TYPE_LOCATION = 3;
 
     public PostAdapter(Context context, OnPostRecyclerViewClickListener recyclerViewClickListener) {
         this.inflater = LayoutInflater.from(context);
@@ -22,23 +23,38 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.context = context;
     }
 
+    /**
+     * In base al ViewType impostato in {@link #getItemViewType(int)} imposta nel
+     * {@link PostViewHolder} il tipo di layout che il quel post deve avere
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
-            case 1:
+            case POST_TYPE_TEXT:
                 View tView = inflater.inflate(R.layout.text_post_list_row, parent, false);
                 return new PostViewHolder(tView, recyclerViewClickListener);
-            case 2:
+            case POST_TYPE_IMAGE:
                 View iView = inflater.inflate(R.layout.image_post_list_row, parent, false);
                 return new PostViewHolder(iView, recyclerViewClickListener);
-            case 3:
+            case POST_TYPE_LOCATION:
                 View lView = inflater.inflate(R.layout.location_post_list_row, parent, false);
                 return new PostViewHolder(lView, recyclerViewClickListener);
         }
         return null;
     }
 
+    /**
+     * In base al ViewType ritornato in {@link #getItemViewType(int)} chiama un metodo del
+     * {@link PostViewHolder} diverso per tipo di post. Ottiene da {@link Model#getPost(int)}
+     * il {@link Post} e da {@link Model#getUser(String)} lo {@link User} per prendere la sua
+     * immagine profilo da passare al {@link PostViewHolder}
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Post post = Model.getInstance(context).getPost(position);
@@ -49,32 +65,41 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         PostViewHolder viewHolder = (PostViewHolder) holder;
         switch (holder.getItemViewType()) {
-            case 1:
+            case POST_TYPE_TEXT:
                 viewHolder.updateContent(post, picture);
                 break;
-            case 2:
+            case POST_TYPE_IMAGE:
                 viewHolder.updateContent((TextImagePost) post, picture);
                 break;
-            case 3:
+            case POST_TYPE_LOCATION:
                 viewHolder.updateContent((LocationPost) post, picture);
                 break;
         }
     }
 
+    /**
+     * In base al tipo di post alla posizione passata ritorna una costante numerica diversa
+     * in modo da identificare il tipo di post direttamente negli utilizzi successivi
+     * @param position
+     * @return
+     */
     @Override
     public int getItemViewType(int position) {
         Post post = Model.getInstance(context).getPost(position);
         switch (post.getType()) {
-            case "t":
-                return 1;
-            case "i":
-                return 2;
-            case "l":
-                return 3;
+            case Post.TEXT:
+                return POST_TYPE_TEXT;
+            case Post.IMAGE:
+                return POST_TYPE_IMAGE;
+            case Post.LOCATION:
+                return POST_TYPE_LOCATION;
         }
         return 0;
     }
 
+    /**
+     * Aggiorna la recyclerView con i nuovi aggiornamenti del {@link Model}
+     */
     public void notifyData() {
         notifyDataSetChanged();
     }

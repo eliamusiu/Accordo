@@ -1,6 +1,7 @@
 package com.example.accordo;
 
 public abstract class Post {
+    public static final String TEXT = "t", IMAGE = "i", LOCATION = "l";
     private String uid, name, pversion, pid, type;
 
     public String getUid() {

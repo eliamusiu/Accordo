@@ -8,7 +8,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,7 +19,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.stfalcon.imageviewer.StfalconImageViewer;
-import com.stfalcon.imageviewer.loader.ImageLoader;
 
 import org.json.JSONException;
 
@@ -43,16 +41,17 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
 
-        androidx.appcompat.widget.Toolbar myToolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.channelToolbar);
+        // Setta la toolbar (titolo in alto della Activity)
+        androidx.appcompat.widget.Toolbar myToolbar = findViewById(R.id.channelToolbar);
         setSupportActionBar(myToolbar);
 
-        // Prende l'indice del'elemento della RecyclerView che è stato cliccato
+        // Prende l'indice del'elemento della RecyclerView dei canali della WallActivity
+        // che è stato cliccato
         Intent intent = getIntent();
         ctitle = intent.getStringExtra("ctitle");
-        getSupportActionBar().setTitle(ctitle);
+        getSupportActionBar().setTitle(ctitle);             // Setta il titolo della toolbar con il nome del canale
 
-
-
+        // Gestore evento di click sul bottone di invio del post
         findViewById(R.id.sendButton).setOnClickListener(v -> {
             try {
                 addPost();
@@ -61,16 +60,13 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
             }
         });
 
-        postsSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.postsSwiperefresh);
+        // Gestore evento di swipe to refresh per aggiornare i post
+        postsSwipeRefreshLayout = findViewById(R.id.postsSwiperefresh);
         postsSwipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        getPosts();
-                    }
-                }
+                () -> getPosts()
         );
 
+        // Gestore evento di click sul bottone "Allega" per mostrare il popUp con la sceltra tra immagine e posizione
         findViewById(R.id.attachButton).setOnClickListener(v -> {
             PopupAttach popupAttach = new PopupAttach();
             popupAttach.showPopupWindow(v, findViewById(R.id.postConstraintLayout), this);
@@ -83,11 +79,13 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         getPosts();
     }
 
-    // Richiesta di rete per ottenere i post
+    /**
+     * Fa la richiesta di rete del {@link CommunicationController} per ottenere i post
+      */
     private void getPosts() {
         cc = new CommunicationController(this);
         try {
-            cc.getPosts(ctitle,
+            cc.getChannel(ctitle,
                     response -> {
                         try {
                             Model.getInstance(this).addPosts(response);     // Setta i post testo
@@ -105,17 +103,20 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         }
     }
 
+    /**
+     * Chiama il metodo {@link ProfilePictureController#setProfilePictures(Runnable)}
+     */
     private void getUserPictures() {
         ProfilePictureController ppc = new ProfilePictureController(this);
-        ppc.setProfilePictures(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyData();
-            }
-        });
+        ppc.setProfilePictures(() -> adapter.notifyData());
     }
 
-    // Richiesta di rete per prendere le immagini
+    /**
+     * Fa la richiesta di rete del {@link CommunicationController} per ottenere le immagini e nella
+     * callback le aggiunge sia al {@link Model} sia a {@link #images}. Alla fine chiama
+     * {@link PostAdapter#notifyData()}
+     * @throws JSONException
+     */
     private void getImages() throws JSONException {
         images.clear();
         cc = new CommunicationController(this);
@@ -143,10 +144,15 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
 
     }
 
+    /**
+     * Fa la richiesta di rete del {@link CommunicationController} per aggiungere un post di tipo
+     * testo, prendendolo dalla EditText
+     * @throws JSONException
+     */
     private void addPost() throws JSONException {
         String postText = ((EditText)findViewById(R.id.postEditText)).getText().toString();
         cc = new CommunicationController(this);
-        cc.addPost(ctitle, postText, "t",
+        cc.addPost(ctitle, postText, Post.TEXT,
                 response -> {
                     ((EditText)findViewById(R.id.postEditText)).setText("");
                     getPosts();
@@ -154,6 +160,10 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                 error -> Log.e(TAG, "Errore aggiunta post: " + error));
     }
 
+    /**
+     * Setta {@link #rv} impostando il layout in modo che sia inverso (post più recente in basso)
+     * e scorrere automaticamente {@link #rv} in basso
+     */
     private void setRecyclerView() {
         rv = findViewById(R.id.postsRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -165,21 +175,29 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         rv.setAdapter(adapter);
     }
 
+    /**
+     * Gestore dell'evento di click sull'immagine di un post di tipo immagine.
+     * Mpstra l'immagine a schermo intero tramite {@link StfalconImageViewer.Builder} e, scorrendp,
+     * le immagini degli altri post, salvate in {@link #images}
+     * @param v {@link ImageView} che è stata cliccata
+     * @param position Posizione dell'elemento cliccato in {@link #rv}
+     */
     @Override
     public void onRecyclerViewImageClick(View v, int position) {
         ImageView contentImageView = (ImageView)v;
         String imageContent = ((TextImagePost)Model.getInstance(this).getPost(position)).getContent();
         int imagePosition = Utils.getBitmapPositionInList(images, Utils.getBitmapFromBase64(imageContent));     // TODO: se le immagini sono doppie prende sempre la prima
-        new StfalconImageViewer.Builder<>(this, images, new ImageLoader<Bitmap>() {
-            @Override
-            public void loadImage(ImageView imageView, Bitmap image) {
-                Glide.with(getApplicationContext())
-                        .load(image)
-                        .into(imageView);
-            }
-        }).withStartPosition(imagePosition).withTransitionFrom(contentImageView).show();
+        new StfalconImageViewer.Builder<>(this, images, (imageView, image) -> Glide.with(getApplicationContext())
+                .load(image)
+                .into(imageView)).withStartPosition(imagePosition).withTransitionFrom(contentImageView).show();
     }
 
+    /**
+     * Gestore dell'evento di click sulla posizione di un posti di tipo posizione. Fa partire
+     * {@link SendImageActivity} passandole la posizione del post in {@link #rv}
+     * @param v {@link android.widget.LinearLayout} della posizione che è stato cliccato
+     * @param position Posizione dell'elemento cliccato in {@link #rv}
+     */
     @Override
     public void onRecyclerViewLocationClick(View v, int position) {
         Intent intent = new Intent(ChannelActivity.this, SendLocationActivity.class);
@@ -193,6 +211,11 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         return true;
     }
 
+    /**
+     * Gestore evento di click su bottone della {@link android.widget.Toolbar} (refresh)
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_refresh) {
@@ -204,7 +227,13 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         }
     }
 
-    /* Click su tipo allegato (immagine o posizione) nel popupmenu */
+    /* C */
+
+    /**
+     * Gestore evento di lick su tipo allegato (immagine o posizione) in {@link PopupAttach}.
+     * Crea la relativa activity: file manager o {@link SendLocationActivity}
+     * @param type Tipo di allegato: "i" immagine, "l" posizione
+     */
     public void onAttachClick(String type) {
         if (type.equals("i")) {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -219,18 +248,21 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         }
     }
 
+    /**
+     * Chiamata quando viene selezionata l'immagine da inviare nel file manager. Apre
+     * {@link SendImageActivity} per inviare l'immagine
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_CANCELED && resultCode == RESULT_OK && requestCode == ACTION_REQUEST_GALLERY) {
-            startImagePickActivity(data.getData());
+            Intent intent = new Intent(ChannelActivity.this, SendImageActivity.class);
+            intent.putExtra("imagePath", data.getData());
+            intent.putExtra("ctitle", ctitle);
+            startActivity(intent);
         }
-    }
-
-    private void startImagePickActivity(Uri imagePath) {
-        Intent intent = new Intent(ChannelActivity.this, SendImageActivity.class);
-        intent.putExtra("imagePath", imagePath);
-        intent.putExtra("ctitle", ctitle);
-        startActivity(intent);
     }
 }

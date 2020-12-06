@@ -28,31 +28,49 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         profileImageView = itemView.findViewById(R.id.profileImageView);
     }
 
-    /* Post tipo testo */
+    /**
+     * Aggiorna le view dei post di tipo testo
+     * @param post Post che si vuole mostrare nella riga della recyclerView
+     * @param picture Immagine del profilo dell'autore codificata in base64 (o null, se non c'è)
+     */
     public void updateContent(Post post, String picture) {
-        setUserInfo(post, picture);
+        setUserInfo(post.getName(), picture);
         TextImagePost tiPost = (TextImagePost) post;
         contentTextView.setText(tiPost.getContent());
     }
 
-    /* Post tipo immagine */
+    /**
+     * Aggiorna le view dei post di tipo immagine
+     * @param post Post che si vuole mostrare nella riga della recyclerView
+     * @param picture Immagine del profilo dell'autore codificata in base64 (o null, se non c'è)
+     */
     public void updateContent(TextImagePost post, String picture) {
-        setUserInfo(post, picture);
+        setUserInfo(post.getName(), picture);
         if (post.getContent() != null) {
             contentImageView.setImageBitmap(Utils.getBitmapFromBase64(post.getContent()));
             contentImageView.setOnClickListener(this::onImageClick);
         }
     }
 
-    /* Post tipo posizione */
+    /**
+     * Aggiorna le view dei post di tipo posizione
+     * @param post Post che si vuole mostrare nella riga della recyclerView
+     * @param picture Immagine del profilo dell'autore codificata in base64 (o null, se non c'è)
+     */
     public void updateContent(LocationPost post, String picture) {
-        setUserInfo(post, picture);
+        setUserInfo(post.getName(), picture);
         locationLinearLayout.setOnClickListener(this::onLocationClick);
     }
 
-    private void setUserInfo(Post post, String picture) {
-        if (post.getName() != null) {                   // Se c'è il nome dell'autore lo setta
-            authorTextView.setText(post.getName());
+    /**
+     * Aggiorna la {@link TextView} del nome dell'autore e l'{@link ImageView} dell'immagine del
+     * profilo dell'autore
+     * @param name Nome dell'autore (o null, se non c'è)
+     * @param picture Immagine dell'autore codificata in base64 (o null, se non c'è)
+     */
+    private void setUserInfo(String name, String picture) {
+        if (name != null) {                   // Se c'è il nome dell'autore lo setta
+            authorTextView.setText(name);
         }
         if (picture != null) {                          // Se c'è l'immagine di profilo la setta
             profileImageView.setImageBitmap(Utils.getBitmapFromBase64(picture));
