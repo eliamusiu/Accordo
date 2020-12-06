@@ -42,7 +42,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
             contentImageView.setImageBitmap(Utils.getBitmapFromBase64(post.getContent()));
             contentImageView.setOnClickListener(this::onImageClick);
         }
-
     }
 
     /* Post tipo posizione */
@@ -52,10 +51,10 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setUserInfo(Post post, String picture) {
-        if (post.getName() != null) {
+        if (post.getName() != null) {                   // Se c'è il nome dell'autore lo setta
             authorTextView.setText(post.getName());
         }
-        if (picture != null) {
+        if (picture != null) {                          // Se c'è l'immagine di profilo la setta
             profileImageView.setImageBitmap(Utils.getBitmapFromBase64(picture));
         }
     }

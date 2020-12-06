@@ -1,5 +1,6 @@
 package com.example.accordo;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,8 +25,10 @@ import org.json.JSONException;
 
 public class WallActivity extends AppCompatActivity implements OnRecyclerViewClickListener {
     final String TAG = WallActivity.class.toString();
-    CommunicationController cc;
-    SwipeRefreshLayout wallSwipeRefreshLayout;
+    private static final int ACTION_REQUEST_GALLERY = 1;
+    private CommunicationController cc;
+    private SwipeRefreshLayout wallSwipeRefreshLayout;
+    private ProfileBottomSheetFragment bottomSheetFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +44,12 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
             getWall();
         }
 
-        // Gestore evento sulla barra di navigazione
+        // Gestore evento sulla barra di navigazione (modifica profilo)
+
         ((BottomNavigationView)findViewById(R.id.bottom_navigation)).setOnNavigationItemSelectedListener( item -> {
                 if (item.getItemId() == R.id.profile_page) {
-                    ProfileBottomSheetFragment dialog = ProfileBottomSheetFragment.newInstance();
-                    dialog.show(getSupportFragmentManager(), ProfileBottomSheetFragment.TAG);
+                    bottomSheetFragment = ProfileBottomSheetFragment.newInstance(this);
+                    bottomSheetFragment.show(getSupportFragmentManager(), ProfileBottomSheetFragment.TAG);
                 }
             return false;
         });
@@ -55,14 +60,10 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
             fragment.show(getSupportFragmentManager(), " Add channel fragment");
         });
 
+        // Gestore evento swipe to refresh (aggiorna canali)
         wallSwipeRefreshLayout = ((SwipeRefreshLayout)findViewById(R.id.wallSwiperefresh));
         wallSwipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        getWall();
-                    }
-                }
+                () -> getWall()
         );
     }
 
@@ -128,5 +129,20 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         String ctitle = Model.getInstance(this).getChannel(position).getCtitle();
         intent.putExtra("ctitle", ctitle);
         startActivity(intent);
+    }
+
+    /* Mostra */
+    public void onEditProfileImageClick() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Scegli immagine"), 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_CANCELED && resultCode == RESULT_OK && requestCode == ACTION_REQUEST_GALLERY) {
+            bottomSheetFragment.setProfilePicture(data.getData());
+        }
     }
 }

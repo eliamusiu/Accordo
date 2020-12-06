@@ -25,18 +25,19 @@ import java.util.stream.Stream;
 public class ProfilePictureController {
     private static final String TAG = ProfilePictureController.class.toString();
     private Context context;
-    private PostAdapter adapter;
     private Model model;
 
-    public ProfilePictureController(Context context, PostAdapter adapter, Runnable runnable) {
+    public ProfilePictureController(Context context) {
         this.context = context;
-        this.adapter = adapter;
+    }
+
+    public void setProfilePictures(Runnable runnable) {
         (new Thread(new Runnable(){
             public void run() {
                 model = Model.getInstance(context);
                 model.setUsersFromDB();                 // Setta nella lista users del Model gli utenti presenti nel DB
                 try {
-                    setPostsProfilePictures(runnable);
+                    getMissingProfilePictures(runnable);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -44,65 +45,31 @@ public class ProfilePictureController {
         })).start();
     }
 
-    public void setPostsProfilePictures(Runnable runnable) throws JSONException {
+    private void getMissingProfilePictures(Runnable runnable) throws JSONException {
         List<Post> usersInChannel = model.getAllPosts().stream().filter(distinctByKey(Post::getUid)).collect(Collectors.toList());
+        final Handler handler = new Handler(Looper.getMainLooper());
 
-        for (Post post : usersInChannel) {       // Scorre i post distinti
+        for (Post post : usersInChannel) {       // Scorre i post distinti per uid
             String uid = post.getUid();
-            String pversion = post.getPversion();
 
-            //User postAuthor = model.getUser(uid);
+            // Se l'utente di questo post non è nel model/DB o se non ha l'immagine di profilo aggiornata
             if (model.getUser(uid) == null || !model.getUser(uid).getPversion().equals(post.getPversion())) {
                 getUserPicture(uid,
                         () -> {     // Callback se l'immagine è stata presa dalla rete per aggiornarla/aggiungerla
-                            try {
-                                getUserPicture(uid, null);
-                                //postAuthor.setPicture();
-                                Log.d(TAG, "Ho ricevuto la picture dalla rete");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            handler.post(runnable);
+                            Log.d(TAG, "Ho ricevuto la picture dalla rete");
                         });
             }
-            if (usersInChannel.indexOf(post) == (usersInChannel.size() - 1)) {
-                final Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(runnable);
-            }
-            /*
-            if (postAuthor != null && postAuthor.getPversion().equals(pversion)) {      // Se l'utente c'è nel Model (quindi nel DB)
-                //post.setPicture(postAuthor.getPicture());
-                Log.d(TAG, "Setto la picture nel post");
-                handler.post(runnable);
-            } else {
-                getUserPicture(uid, pversion,
-                        () -> {     // Callback se l'immagine è stata presa dalla rete per aggiornarla/aggiungerla
-                            try {
-                                getUserPicture(uid, pversion, null);
-                                //postAuthor.setPicture();
-                                Log.d(TAG, "Ho ricevuto la picture dalla rete");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        });
-            }*/
-
-            /*
-            if (picture != null && !picture.equals("null")) {
-                Model.getInstance(context).getUser(uid).setPicture(picture);
-                post.setPicture(picture);
-                Log.d(TAG, "Setto la picture nel post");
-                handler.post(runnable);
-            }*/
         }
     }
 
     /* Toglie le ripetizioni in una lista in base a un attributo  */
-    public static <T> Predicate<T> distinctByKey(Function<? super T,Object> keyExtractor) {
+    private static <T> Predicate<T> distinctByKey(Function<? super T,Object> keyExtractor) {
         Map<Object,Boolean> seen = new ConcurrentHashMap<>();
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
-    public void getUserPicture(String uid, Runnable updateUserCallback) throws JSONException {
+    private void getUserPicture(String uid, Runnable updateUserCallback) throws JSONException {
         final Handler handler = new Handler(Looper.getMainLooper());
         User postAuthor = model.getUser(uid);
 

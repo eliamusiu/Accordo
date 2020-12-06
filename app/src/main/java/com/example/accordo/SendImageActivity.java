@@ -19,30 +19,20 @@ import java.io.InputStream;
 import static com.example.accordo.Utils.getBase64FromBitmap;
 
 public class SendImageActivity extends AppCompatActivity {
-    private static final int ACTION_REQUEST_CAMERA = 0;
-    private static final int ACTION_REQUEST_GALLERY = 1;
     private static final String TAG = SendImageActivity.class.toString();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_image);
 
-        Uri imagePath = (Uri) getIntent().getParcelableExtra("imagePath");
-        InputStream inputStream = null;
-        try {
-            inputStream = getContentResolver().openInputStream(imagePath);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        Bitmap imageBitmap = BitmapFactory.decodeStream(inputStream);
-        ImageView imageView = findViewById(R.id.pickedImageImageView);
-        imageView.setImageBitmap(imageBitmap);
-
         String ctitle = getIntent().getStringExtra("ctitle");
 
+        Bitmap imageBitmap = Utils.getBitmapFromUri(getIntent().getParcelableExtra("imagePath"), getContentResolver());
+        ((ImageView)findViewById(R.id.pickedImageImageView)).setImageBitmap(imageBitmap);
+
+        // Listener con callback per inviare l'immagine al server trasformandola in base64
         findViewById(R.id.sendImageButton).setOnClickListener(v -> {
-            String base64Image = getBase64FromBitmap(imageBitmap);
+            String base64Image = Utils.getBase64FromBitmap(imageBitmap);
             CommunicationController cc = new CommunicationController(this);
             try {
                 cc.addPost(ctitle, base64Image, "i",

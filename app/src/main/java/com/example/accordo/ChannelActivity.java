@@ -94,6 +94,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                             setRecyclerView();
                             getUserPictures();                              // Setta le immagini profilo degli utenti
                             getImages();                                    // Setta i post immagine
+                            postsSwipeRefreshLayout.setRefreshing(false);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -105,7 +106,8 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
     }
 
     private void getUserPictures() {
-        ProfilePictureController ppc = new ProfilePictureController(this, adapter, new Runnable() {
+        ProfilePictureController ppc = new ProfilePictureController(this);
+        ppc.setProfilePictures(new Runnable() {
             @Override
             public void run() {
                 adapter.notifyData();
@@ -119,26 +121,25 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         cc = new CommunicationController(this);
         ArrayList<TextImagePost> imagePosts = Model.getInstance(this).getAllImagePosts();
 
-            for (TextImagePost post : imagePosts) {
-                cc.getPostImage(post.getPid(),
-                        reponse -> {
-                            try {
-                                String content = reponse.getString("content");
-                                post.setContent(content);
-                                images.add(Utils.getBitmapFromBase64(content));
+        for (TextImagePost post : imagePosts) {
+            cc.getPostImage(post.getPid(),
+                    reponse -> {
+                        try {
+                            String content = reponse.getString("content");
+                            post.setContent(content);
+                            images.add(Utils.getBitmapFromBase64(content));
+                            if (imagePosts.indexOf(post) == (imagePosts.size() - 1)) { // se è l'ultimo post con immagine viene settata la recycler view
                                 adapter.notifyData();
-                                if (imagePosts.indexOf(post) == (imagePosts.size() - 1)) { // se è l'ultimo post con immagine viene settata la recycler view
-                                    Collections.reverse(images);
-                                    rv.scrollToPosition(0);
-                                    postsSwipeRefreshLayout.setRefreshing(false);
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                Collections.reverse(images);
+                                rv.scrollToPosition(0);
                             }
-                        },
-                        error -> Log.d(TAG, "request error: " + error.toString())
-                );
-            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    },
+                    error -> Log.d(TAG, "request error: " + error.toString())
+            );
+        }
 
     }
 
@@ -201,21 +202,10 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         } else {
             return super.onOptionsItemSelected(item);
         }
-        /*
-        switch (item.getItemId()) {
-            case R.id.menu_refresh:
-                postsSwipeRefreshLayout.setRefreshing(true);
-                getPosts();
-                return true;
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-        }*/
     }
 
     /* Click su tipo allegato (immagine o posizione) nel popupmenu */
-    public void onClick(String type) {
+    public void onAttachClick(String type) {
         if (type.equals("i")) {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
@@ -243,6 +233,4 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         intent.putExtra("ctitle", ctitle);
         startActivity(intent);
     }
-
-
 }

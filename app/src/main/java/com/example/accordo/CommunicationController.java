@@ -70,6 +70,9 @@ public class CommunicationController {
         final JSONObject jsonBody = new JSONObject();
         jsonBody.put("sid", sid);
         jsonBody.put("name", name);
+        if (picture != null) {
+            jsonBody.put("picture", picture);
+        }
 
         JsonObjectRequest request = new JsonObjectRequest(url, jsonBody, responseListener, errorListener);
         requestQueue.add(request);

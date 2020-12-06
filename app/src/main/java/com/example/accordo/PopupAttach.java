@@ -48,12 +48,12 @@ public class PopupAttach {
         //Handler for clicking
         popupView.findViewById(R.id.attachImageButton).setOnClickListener(v -> {
             popupWindow.dismiss();
-            ((ChannelActivity)context).onClick("i");
+            ((ChannelActivity)context).onAttachClick("i");
         });
 
         popupView.findViewById(R.id.attachLocationButton).setOnClickListener(v -> {
             popupWindow.dismiss();
-            ((ChannelActivity)context).onClick("l");
+            ((ChannelActivity)context).onAttachClick("l");
         });
     }
 }

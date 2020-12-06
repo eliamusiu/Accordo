@@ -1,14 +1,16 @@
 package com.example.accordo;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -18,13 +20,18 @@ import org.json.JSONObject;
 public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
     public static final String TAG = ProfileBottomSheetFragment.class.toString();
     private CommunicationController cc;
+    ImageView profilePictureImageView;
+    EditText profileNameEditText;
+    Context context;
+    Bitmap croppedProfilePicBitmap = null;
 
-    public ProfileBottomSheetFragment() {
+    public ProfileBottomSheetFragment(Context context) {
+        this.context = context;
         // Required empty public constructor
     }
 
-    public static ProfileBottomSheetFragment newInstance() {
-        return new ProfileBottomSheetFragment();
+    public static ProfileBottomSheetFragment newInstance(Context context) {
+        return new ProfileBottomSheetFragment(context);
     }
 
     @Override
@@ -37,20 +44,29 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile_bottom_sheet, container, false);
+        profilePictureImageView = view.findViewById(R.id.userProfileImageView);
+        profileNameEditText = view.findViewById(R.id.profileNameEditText);
 
+        // Prende le informazioni dell'utente dal server per poi mostrarle nell'imageView e nell'editText
         try {
             cc = new CommunicationController(getContext());
             cc.getProfile(response -> {
-                        setInterfaceProfileInfo(response, view);
+                        setInterfaceProfileInfo(response);
                     },
                     error -> Log.e(TAG, "Errore richiesta: " + error));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+        // Click sull'immagine per cambiarla (apre il file explorer dalla WallActivity)
+        profilePictureImageView.setOnClickListener(v -> {
+            ((WallActivity)context).onEditProfileImageClick();
+        });
+
+        // Click sul bottone "modifica" per inviare al server le modifiche effettuate
         view.findViewById(R.id.editProfileButton).setOnClickListener(v -> {
             try {
-                editProfile(view);
+                editProfile();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -58,23 +74,37 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         return view;
     }
 
-    private void setInterfaceProfileInfo(JSONObject response, View view) {
+    private void setInterfaceProfileInfo(JSONObject response) {
         try {
-            Object nameObject = response.get("name");
-            if (!nameObject.equals(null)) {
-                String name = (String) nameObject;
-                ((EditText)view.findViewById(R.id.profileNameEditText)).setText(name);
+            Object name = response.get("name");
+            Object picture = response.get("picture");
+            if (name != null) {
+                profileNameEditText.setText(name.toString());
+            }
+            if (picture != null) {
+                profilePictureImageView.setImageBitmap(Utils.getBitmapFromBase64(picture.toString()));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void editProfile(View view) throws JSONException {
-        String name = ((EditText) view.findViewById(R.id.profileNameEditText)).getText().toString();
+    private void editProfile() throws JSONException {
+        String name = profileNameEditText.getText().toString();
+        String base64Image = null;
+
+        if (croppedProfilePicBitmap != null) {
+            base64Image = Utils.getBase64FromBitmap(croppedProfilePicBitmap);
+        }
         cc = new CommunicationController(getContext());
-        cc.setProfile(name, null,
+        cc.setProfile(name, base64Image,
                 response -> Log.d(TAG, "Richiesta di rete OK"),
-                error -> Log.e(TAG, "Errore richiesta: " + error));
+                error -> Log.e(TAG, "Errore richiesta: " + error));     // TODO: Gestire errore 400 (nome già usato)
+    }
+
+    public void setProfilePicture(Uri uri) {
+        Bitmap bitmap = Utils.getBitmapFromUri(uri, context.getContentResolver());
+        croppedProfilePicBitmap = Utils.cropImageToSquare(bitmap);
+        profilePictureImageView.setImageBitmap(croppedProfilePicBitmap);
     }
 }
