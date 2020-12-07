@@ -1,8 +1,15 @@
 package com.example.accordo;
 
+import androidx.annotation.NonNull;
+import androidx.room.PrimaryKey;
+
 public abstract class Post {
     public static final String TEXT = "t", IMAGE = "i", LOCATION = "l";
-    private String uid, name, pversion, pid, type;
+    private String uid, name, pversion, type;
+
+    @PrimaryKey
+    @NonNull
+    private String pid;
 
     public String getUid() {
         return uid;

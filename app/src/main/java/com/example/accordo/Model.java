@@ -143,13 +143,6 @@ public class Model {
     }
 
     /**
-     * Prende gli utenti nel database e li salva in {@link #users}
-     */
-    public void setUsersFromDB() {
-        users = db.userDao().getAllUsers();
-    }
-
-    /**
      * Ritorna l'utente specificato
      * @param uid Utente che si vuole ottenere
      * @return Utente con l'uid passato
@@ -159,6 +152,53 @@ public class Model {
                 .filter(user -> uid.equals(user.getUid()))
                 .findAny()
                 .orElse(null);
+    }
+
+    /**
+     * Ritorna il canale alla posizione specificata
+     * @param index
+     * @return
+     */
+    public Channel getChannel(int index) {
+        return channels.get(index);
+    }
+
+    /**
+     * Ritorna il post alla posizione specificata
+     * @param index
+     * @return
+     */
+    public Post getPost(int index) {
+        return posts.get(index);
+    }
+
+    /**
+     * Ritorna il post con il PID specificato
+     * @param pid
+     * @return il post con il PID specificato
+     */
+    public Post getPost(String pid) {
+        return posts.stream()
+                .filter(post -> pid.equals(post.getPid()))
+                .findAny()
+                .orElse(null);
+    }
+
+    public int getPostsSize() {
+        return posts.size();
+    }
+
+    public int getChannelsSize() {
+        return channels.size();
+    }
+
+
+    //region Database immagini di profilo
+    /**
+     * Prende gli utenti nel database e li salva in {@link #users}
+     */
+    public void setUsersFromDB() {
+        users = db.userDao().getAllUsers();
     }
 
     /**
@@ -187,30 +227,25 @@ public class Model {
         (new Thread(() -> db.userDao().insertUser(user))).start();
         users.add(user);
     }
+    //endregion
 
-    /**
-     * Ritorna il canale alla posizione specificata
-     * @param index
-     * @return
-     */
-    public Channel getChannel(int index) {
-        return channels.get(index);
+    //region Database immagini dei post
+    //TODO: scrivere documentazione
+    public void setImagesFromDB() {
+        List<TextImagePost> images = db.imagePostDao().getAllImages();
+        ArrayList<TextImagePost> imagePosts = getAllImagePosts();
+        for (TextImagePost imagePost : images) {
+            imagePosts.stream().filter(post -> post.getPid().equals(imagePost.getPid()))
+            .forEach(post -> post.setContent(imagePost.getContent()));
+        }
     }
 
-    /**
-     * Ritorna il post alla posizione specificata
-     * @param index
-     * @return
-     */
-    public Post getPost(int index) {
-        return posts.get(index);
+    public void addImage(String pid, String content) {
+        TextImagePost imagePost = new TextImagePost();
+        imagePost.setPid(pid);
+        imagePost.setContent(content);
+        (new Thread(() -> db.imagePostDao().insertImage(imagePost))).start();
+        ((TextImagePost) getPost(pid)).setContent(content);
     }
-
-    public int getPostsSize() {
-        return posts.size();
-    }
-
-    public int getChannelsSize() {
-        return channels.size();
-    }
+    //endregion
 }

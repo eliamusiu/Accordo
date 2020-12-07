@@ -11,6 +11,8 @@ import com.android.volley.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,22 +20,23 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class ProfilePictureController {
-    private static final String TAG = ProfilePictureController.class.toString();
+public class PictureController {
+    private static final String TAG = PictureController.class.toString();
     private Context context;
     private Model model;
 
-    public ProfilePictureController(Context context) {
+    public PictureController(Context context) {
         this.context = context;
+        model = Model.getInstance(context);
     }
 
+    //region Gestione immagini di profilo
     /**
      * Prende l'istanza di {@link Model} e chiama {@link Model#setUsersFromDB()}
      * @param runnable Callback che verrà chiamata ad ogni immagine ricevuta
      */
     public void setProfilePictures(Runnable runnable) {
         (new Thread(() -> {
-            model = Model.getInstance(context);
             model.setUsersFromDB();                 // Setta nella lista users del Model gli utenti presenti nel DB
             try {
                 getMissingProfilePictures(runnable);
@@ -42,6 +45,7 @@ public class ProfilePictureController {
             }
         })).start();
     }
+
 
     /**
      * Per ogni utente distinto che ha pubblicato post nel canale controlla se è presente in
@@ -54,6 +58,7 @@ public class ProfilePictureController {
     private void getMissingProfilePictures(Runnable runnable) throws JSONException {
         List<Post> usersInChannel = model.getAllPosts().stream().filter(distinctByKey(Post::getUid)).collect(Collectors.toList());
         final Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(runnable);
 
         for (Post post : usersInChannel) {       // Scorre i post distinti per uid
             String uid = post.getUid();
@@ -144,9 +149,51 @@ public class ProfilePictureController {
      */
     private void getUserInfo(String uid, Response.Listener<JSONObject> responseCallback) throws JSONException {
         CommunicationController cc = new CommunicationController(context);
-
         cc.getUserPicture(uid, responseCallback,
                 error -> Log.e(TAG,"Errore scaricamento immagine dalla rete: " + error.networkResponse)
         );
     }
+    //endregion
+
+    //region Gestione immagini dei post
+    /**
+     * Prende l'istanza di {@link Model} e chiama {@link Model#setImagesFromDB()} ()}
+     * @param runnable Callback che verrà chiamata ad ogni immagine ricevuta
+     */
+    public void setPostImages(Runnable runnable) {
+        (new Thread(() -> {
+            model.setImagesFromDB();  // Setta nella lista posts del Model le immagini presenti nel DB
+            try {
+                getImages(runnable);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        })).start();
+    }
+
+    private void getImages(Runnable runnable) throws JSONException {
+        CommunicationController cc = new CommunicationController(context);
+        ArrayList<TextImagePost> imagePosts = model.getAllImagePosts();
+        final Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.post(runnable); //le immagini che sono già nel database vengono caricate immediatamente
+
+        for (TextImagePost post : imagePosts) {
+            if (post.getContent() == null) {
+                cc.getPostImage(post.getPid(),
+                        response -> {
+                            try {
+                                Log.d(TAG, "scarico immagini dalla rete");
+                                model.addImage(post.getPid(), response.getString("content"));
+                                handler.post(runnable);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        },
+                        error -> Log.d(TAG, "request error: " + error.toString())
+                );
+            }
+        }
+    }
+    //endregion
 }

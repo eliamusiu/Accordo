@@ -47,7 +47,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return null;
     }
 
-    /** TODO: modificare doc
+    /**
      * Ottiene da {@link Model#getPost(int)} il {@link Post} e da {@link Model#getUser(String)}
      * lo {@link User} per prendere la sua immagine di profilo da passare al {@link PostViewHolder}.
      * Chiama {@link PostViewHolder#setUserName(String)},
@@ -62,9 +62,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         User postAuthor = Model.getInstance(context).getUser(post.getUid());
         PostViewHolder viewHolder = (PostViewHolder)holder;
 
-        viewHolder.setUserName(post.getName());
-        updateViewHolder(viewHolder, post);
-        if (postAuthor != null) {
+        viewHolder.setUserName(post.getName()); // setta il nome utente a ogni tipo di post (i, l, t)
+        updateViewHolder(viewHolder, post); // aggiorna il contenuto in base al tipo di post
+        if (postAuthor != null) { // viene settata l'immagine di profilo per ogni post
             if (!postAuthor.getPversion().equals("null")) {
                 viewHolder.setProfilePicture(postAuthor.getPicture());
             }

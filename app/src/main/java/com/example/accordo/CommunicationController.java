@@ -162,7 +162,7 @@ public class CommunicationController {
     public void addPost(String ctitle, String content, String type,
                         Response.Listener<JSONObject> responseListener,
                         Response.ErrorListener errorListener) throws JSONException {
-        assert type.equals(Post.TEXT) || type.equals(Post.LOCATION);
+        assert type.equals(Post.TEXT) || type.equals(Post.IMAGE);
         final String serviceUrl = "addPost.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();

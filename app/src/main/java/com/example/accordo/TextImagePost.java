@@ -1,5 +1,8 @@
 package com.example.accordo;
 
+import androidx.room.Entity;
+
+@Entity (tableName = "Images")
 public class TextImagePost extends Post {
     private String content;
 

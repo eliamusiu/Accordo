@@ -15,10 +15,10 @@ public interface UserDao {
     @Query("SELECT uid, pversion, picture FROM User WHERE uid=:uid")
     User getUser(String uid); */
 
-    @Query("SELECT * FROM User")
+    @Query("SELECT * FROM ProfilePictures")
     List<User> getAllUsers();
 
-    @Query("UPDATE user SET pversion = :pversion, picture=:picture WHERE uid = :uid")
+    @Query("UPDATE ProfilePictures SET pversion = :pversion, picture=:picture WHERE uid = :uid")
     void updateUser(String uid, String pversion, String picture);
 
     @Insert

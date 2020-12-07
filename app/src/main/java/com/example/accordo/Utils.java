@@ -6,11 +6,16 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
+import org.w3c.dom.Text;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Utils {
 
@@ -26,6 +31,21 @@ public class Utils {
     }
 
     /**
+     * Trasforma una lista di immagini da {@link Base64} a {@link Bitmap}
+     * @param base64List Lista di immagini da trasformare
+     * @return lista di immagini {@link Bitmap}
+     */
+    public static ArrayList<Bitmap> getBitmapFromBase64(ArrayList<String> base64List) {
+        ArrayList<Bitmap> bitmaps = new ArrayList<>();
+        for (String base64 : base64List) {
+            byte[] decodedString = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            bitmaps.add(decodedByte);
+        }
+        return bitmaps;
+    }
+
+    /**
      * Trasforma l'immagine da {@link Bitmap} a {@link Base64}
      * @param bitmap Immagine da trasformare
      * @return Immagine trasformata
@@ -37,16 +57,24 @@ public class Utils {
         return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT);
     }
 
+
     /**
-     * Restituisce la posizione dell'immagine {@link Bitmap} in una lista {@link List<Bitmap>}
-     * @param images
-     * @param bitmap Immagine di cui si vuole sapere la posizione
-     * @return Posizione nella lista
+     * Ritorna la posizione di un'immagine nella lista di tutti i post
+     * @param postPosition Posizione del post (tra tutti i tipi di post)
+     * @param posts Lista dei post da scorrere
+     * @return posizione dell'immagine (tra i post di tipo immagine)
      */
-    public static int getBitmapPositionInList(List<Bitmap> images, Bitmap bitmap) {
-        for (Bitmap image : images) {
-            if (image.sameAs(bitmap)) {
-                return images.indexOf(image);
+    public static int getImagePositionInPosts(int postPosition, ArrayList<Post> posts) {
+        ArrayList<Post> cPosts = new ArrayList<>(posts);
+        Collections.reverse(cPosts);
+        int imagePosition = 0;
+        postPosition = (cPosts.size() - postPosition) - 1;
+        for (Post post : cPosts) {
+            if (post.getType().equals("i")) {
+                imagePosition++;
+            }
+            if (postPosition == cPosts.indexOf(post)) {
+                return imagePosition - 1;
             }
         }
         return -1;

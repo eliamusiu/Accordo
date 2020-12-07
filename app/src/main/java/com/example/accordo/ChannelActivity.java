@@ -24,17 +24,16 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class ChannelActivity extends AppCompatActivity implements OnPostRecyclerViewClickListener {
     private final String TAG = ChannelActivity.class.toString();
     private CommunicationController cc;
     private String ctitle;
-    SwipeRefreshLayout postsSwipeRefreshLayout;
-    private List<Bitmap> images = new ArrayList<>();
+    private SwipeRefreshLayout postsSwipeRefreshLayout;
     private static final int ACTION_REQUEST_GALLERY = 1;
     private PostAdapter adapter;
     private RecyclerView rv;
+    private ArrayList<Bitmap> images;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +87,9 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
             cc.getChannel(ctitle,
                     response -> {
                         try {
-                            Model.getInstance(this).addPosts(response);     // Setta i post testo
+                            Model.getInstance(this).addPosts(response);     // Setta le informazioni dei post e il contenuto dei post testo
                             setRecyclerView();
-                            getUserPictures();                              // Setta le immagini profilo degli utenti
-                            getImages();                                    // Setta i post immagine
+                            getPictures();                              // Setta le immagini profilo degli utenti
                             postsSwipeRefreshLayout.setRefreshing(false);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -104,21 +102,30 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
     }
 
     /**
-     * Chiama il metodo {@link ProfilePictureController#setProfilePictures(Runnable)}
+     * Chiama il metodo {@link PictureController#setProfilePictures(Runnable)} e {@link PictureController#setPostImages(Runnable)}.
+     * Definisce le callback quando vengono ottenute le immagini
      */
-    private void getUserPictures() {
-        ProfilePictureController ppc = new ProfilePictureController(this);
-        ppc.setProfilePictures(() -> adapter.notifyData());
+    private void getPictures() {
+        PictureController pc = new PictureController(this);
+        pc.setProfilePictures(() -> adapter.notifyData());
+        pc.setPostImages(() -> {
+            adapter.notifyData();
+            // aggiunge a images le immagini ricevute per poi mostrarle nel carousel
+            images = new ArrayList<>();
+            images.clear();
+            for (TextImagePost imagePost : Model.getInstance(this).getAllImagePosts()) {
+                if (imagePost.getContent() != null) {
+                    images.add(Utils.getBitmapFromBase64(imagePost.getContent()));
+                }
+            }
+            Collections.reverse(images);
+        });
     }
 
-    /**
-     * Fa la richiesta di rete del {@link CommunicationController} per ottenere le immagini e nella
-     * callback le aggiunge sia al {@link Model} sia a {@link #images}. Alla fine chiama
-     * {@link PostAdapter#notifyData()}
-     * @throws JSONException
-     */
+/*
+    // TODO: cancellare se non serve più
     private void getImages() throws JSONException {
-        images.clear();
+
         cc = new CommunicationController(this);
         ArrayList<TextImagePost> imagePosts = Model.getInstance(this).getAllImagePosts();
 
@@ -142,7 +149,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
             );
         }
     }
-
+*/
     /**
      * Fa la richiesta di rete del {@link CommunicationController} per aggiungere un post di tipo
      * testo, prendendolo dalla EditText
@@ -176,7 +183,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
 
     /**
      * Gestore dell'evento di click sull'immagine di un post di tipo immagine.
-     * Mpstra l'immagine a schermo intero tramite {@link StfalconImageViewer.Builder} e, scorrendp,
+     * Mostra l'immagine a schermo intero tramite {@link StfalconImageViewer.Builder} e, scorrendp,
      * le immagini degli altri post, salvate in {@link #images}
      * @param v {@link ImageView} che è stata cliccata
      * @param position Posizione dell'elemento cliccato in {@link #rv}
@@ -184,11 +191,11 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
     @Override
     public void onRecyclerViewImageClick(View v, int position) {
         ImageView contentImageView = (ImageView)v;
-        String imageContent = ((TextImagePost)Model.getInstance(this).getPost(position)).getContent();
-        int imagePosition = Utils.getBitmapPositionInList(images, Utils.getBitmapFromBase64(imageContent));     // TODO: se le immagini sono doppie prende sempre la prima
+        //String imageContent = ((TextImagePost)Model.getInstance(this).getPost(position)).getContent();
+        int imagePosition = Utils.getImagePositionInPosts(position, Model.getInstance(this).getAllPosts());
         new StfalconImageViewer.Builder<>(this, images, (imageView, image) -> Glide.with(getApplicationContext())
                 .load(image)
-                .into(imageView)).withStartPosition(imagePosition).withTransitionFrom(contentImageView).show();
+                .into(imageView)).withStartPosition(imagePosition).withTransitionFrom(contentImageView).show(); // TODO: sistemare crash improvvisi al click sull'immagine
     }
 
     /**
@@ -225,8 +232,6 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
             return super.onOptionsItemSelected(item);
         }
     }
-
-    /* C */
 
     /**
      * Gestore evento di lick su tipo allegato (immagine o posizione) in {@link PopupAttach}.
