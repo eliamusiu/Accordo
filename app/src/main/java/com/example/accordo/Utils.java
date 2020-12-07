@@ -66,7 +66,7 @@ public class Utils {
      */
     public static int getImagePositionInPosts(int postPosition, ArrayList<Post> posts) {
         ArrayList<Post> cPosts = new ArrayList<>(posts);
-        Collections.reverse(cPosts);
+        Collections.reverse(cPosts); // TODO: togliere questa copia quando metteremo che il model ritorna direttamente una copia
         int imagePosition = 0;
         postPosition = (cPosts.size() - postPosition) - 1;
         for (Post post : cPosts) {
