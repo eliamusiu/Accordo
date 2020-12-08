@@ -1,5 +1,8 @@
 package com.example.accordo;
 
+import android.app.ActionBar;
+import android.opengl.Visibility;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -10,12 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 public class PostViewHolder extends RecyclerView.ViewHolder {
     private TextView  authorTextView, contentTextView;
     private ImageView contentImageView, profileImageView;
-    private LinearLayout locationLinearLayout;
+    private LinearLayout locationLinearLayout, postLinearLayout, authorLinearLayout;
     private OnPostRecyclerViewClickListener recyclerViewClickListener;
 
     public PostViewHolder(@NonNull View itemView, OnPostRecyclerViewClickListener recyclerViewClickListener) {
         super(itemView);
         this.recyclerViewClickListener = recyclerViewClickListener;
+        postLinearLayout = itemView.findViewById(R.id.postLinearLayout);
+        authorLinearLayout = itemView.findViewById(R.id.authorLinearLayout);
         authorTextView = itemView.findViewById(R.id.authorTextView);
         contentTextView = itemView.findViewById(R.id.contentTextView);
         contentImageView = itemView.findViewById(R.id.contentImageView);
@@ -61,6 +66,11 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         } else {
             authorTextView.setText(R.string.unknown_author);
         }
+    }
+
+    public void setActualUserStyleForPost() {
+        postLinearLayout.setGravity(Gravity.RIGHT);
+        authorLinearLayout.setVisibility(View.GONE);
     }
 
     /**

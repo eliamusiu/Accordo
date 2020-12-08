@@ -2,6 +2,7 @@ package com.example.accordo;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +69,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (!postAuthor.getPversion().equals("null")) {
                 viewHolder.setProfilePicture(postAuthor.getPicture());
             }
+        }
+        if (Model.getInstance(context).getActualUser().getUid().equals(post.getUid())) {
+            viewHolder.setActualUserStyleForPost();
         }
     }
 

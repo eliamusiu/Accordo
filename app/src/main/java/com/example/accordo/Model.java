@@ -21,7 +21,7 @@ public class Model {
     private ArrayList<Post> posts = null;
     private List<User> users = null;
     private String sid = null;
-    private String uid = null;
+    private User actualUser = null;
 
     /**
      * Costruttore che istanzia le liste e costruisce il database
@@ -58,7 +58,7 @@ public class Model {
         JSONArray jsonArray = wallJson.getJSONArray("channels");
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject channelJson = jsonArray.getJSONObject(i);
-            Channel channel = gson.fromJson(String.valueOf(channelJson), Channel.class);
+            Channel channel = gson.fromJson(channelJson.toString(), Channel.class);
             channels.add(channel);
         }
     }
@@ -76,10 +76,10 @@ public class Model {
             JSONObject postJson = jsonArray.getJSONObject(i);
             String type = (String) postJson.get("type");
             if (type.equals("t") || type.equals("i")) {
-                TextImagePost post = gson.fromJson(String.valueOf(postJson), TextImagePost.class);
+                TextImagePost post = gson.fromJson(postJson.toString(), TextImagePost.class);
                 posts.add(post);
             } else if (type.equals("l")) {
-                LocationPost locationPost = gson.fromJson(String.valueOf(postJson), LocationPost.class);
+                LocationPost locationPost = gson.fromJson(postJson.toString(), LocationPost.class);
                 posts.add(locationPost);
             }
         }
@@ -101,18 +101,8 @@ public class Model {
         this.sid = sid;
     }
 
-    // TODO: togliere?
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
     public String getSid() {
         return sid;
-    }
-
-    // TODO: togliere?
-    public  String getUid() {
-        return uid;
     }
 
     // TODO: togliere?
@@ -190,6 +180,14 @@ public class Model {
 
     public int getChannelsSize() {
         return channels.size();
+    }
+
+    public User getActualUser() {
+        return actualUser;
+    }
+
+    public void setActualUser(User actualUser) {
+        this.actualUser = actualUser;
     }
 
 

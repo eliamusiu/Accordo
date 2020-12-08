@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,16 +48,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         profilePictureImageView = view.findViewById(R.id.userProfileImageView);
         profileNameEditText = view.findViewById(R.id.profileNameEditText);
 
-        // Prende le informazioni dell'utente dal server per poi mostrarle nell'imageView e nell'editText
-        try {
-            cc = new CommunicationController(getContext());
-            cc.getProfile(response -> {
-                        setProfileInfo(response);
-                    },
-                    error -> Log.e(TAG, "Errore richiesta: " + error));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        setProfileInfo();
 
         // Click sull'immagine per cambiarla (apre il file explorer dalla WallActivity)
         profilePictureImageView.setOnClickListener(v -> {
@@ -78,18 +70,15 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
      * Inserisce il nome dell'utente nella EditText e l'immagine del profilo nella ImageView
      * @param response Json contente "name" e "picture" del profilo
      */
-    private void setProfileInfo(JSONObject response) {
-        try {
-            Object name = response.get("name");
-            Object picture = response.get("picture");
-            if (name != null) {
-                profileNameEditText.setText(name.toString());
-            }
-            if (picture != null) {
-                profilePictureImageView.setImageBitmap(Utils.getBitmapFromBase64(picture.toString()));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+    private void setProfileInfo() {
+        User actualUser = Model.getInstance(context).getActualUser();
+        Object name = actualUser.getName();
+        Object picture = actualUser.getPicture();
+        if (name != null) {
+            profileNameEditText.setText(name.toString());
+        }
+        if (picture != null) {
+            profilePictureImageView.setImageBitmap(Utils.getBitmapFromBase64(picture.toString()));
         }
     }
 
@@ -106,7 +95,14 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         }
         cc = new CommunicationController(getContext());
         cc.setProfile(name, base64Image,
-                response -> Log.d(TAG, "Richiesta di rete OK"),
+                response -> {
+                    Log.d(TAG, "Richiesta di rete OK");
+                    this.dismiss();
+                    Snackbar snackbar = Snackbar
+                            .make(getActivity().findViewById(R.id.bottomMenu),"Informazioni aggiornate", Snackbar.LENGTH_LONG);
+                    snackbar.setAnchorView(getActivity().findViewById(R.id.fab))
+                            .show();
+                },
                 error -> Log.e(TAG, "Errore richiesta: " + error));     // TODO: Gestire errore 400 (nome già usato)
     }
 

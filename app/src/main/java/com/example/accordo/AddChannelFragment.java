@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.json.JSONException;
 
 public class AddChannelFragment extends DialogFragment {
@@ -58,7 +60,13 @@ public class AddChannelFragment extends DialogFragment {
 
         try {
             cc.addChannel(ctitle,
-                    response -> Log.d(TAG, "Canale creato"), //TODO: visualizzare messaggio
+                    response -> {
+                        Log.d(TAG, "Canale creato");
+                        Snackbar snackbar = Snackbar
+                                .make(getActivity().findViewById(R.id.bottomMenu),"Canale " + ctitle + " correttamente", Snackbar.LENGTH_LONG);
+                        snackbar.setAnchorView(getActivity().findViewById(R.id.fab))
+                                .show();
+                    },
                     error -> Log.d(TAG, "Errore creazione canale: " + error.toString())
             );
         } catch (JSONException e) {

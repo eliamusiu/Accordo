@@ -122,10 +122,16 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         });
     }
 
-/*
-    // TODO: cancellare se non serve più
-    private void getImages() throws JSONException {
 
+    /**
+     * Fa la richiesta di rete del {@link CommunicationController} per ottenere le immagini e nella
+     * callback le aggiunge sia al {@link Model} sia a {@link #images}. Alla fine chiama
+     * {@link PostAdapter#notifyData()}
+     * @throws JSONException
+     */
+    /*
+    private void getImages() throws JSONException {
+        images.clear();
         cc = new CommunicationController(this);
         ArrayList<TextImagePost> imagePosts = Model.getInstance(this).getAllImagePosts();
 
@@ -149,7 +155,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
             );
         }
     }
-*/
+    */
     /**
      * Fa la richiesta di rete del {@link CommunicationController} per aggiungere un post di tipo
      * testo, prendendolo dalla EditText

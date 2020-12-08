@@ -20,6 +20,8 @@ import android.view.View;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 
@@ -43,6 +45,8 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         } else {                                                                    // Se c'è
             getWall();
         }
+
+        getActualUserProfile(); //ottiene l'utente attuale
 
         // Gestore evento sulla barra di navigazione (modifica profilo)
         ((BottomNavigationView)findViewById(R.id.bottom_navigation)).setOnNavigationItemSelectedListener( item -> {
@@ -86,6 +90,10 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
             try {
                 setSharedPreference((String) response.get("sid"));
                 // TODO: fare toast per avvisare l'ottnimento del sid
+                Snackbar snackbar = Snackbar
+                        .make(findViewById(R.id.bottomMenu),"Nuovo utente creato", Snackbar.LENGTH_LONG);
+                snackbar.setAnchorView(R.id.fab)
+                        .show();
                 getWall();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -93,6 +101,24 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
             Log.d(TAG, "request correct: " + response.toString());
         }, error -> Log.d(TAG, "request error: " + error.toString())
         );
+    }
+
+    /**
+     * Fa la richiesta di rete per ottenere l'utente attuale e, nella callback, salva la risposta in
+     * {@link Model#setActualUser(User)}
+     */
+    private void getActualUserProfile() {
+        // Prende le informazioni dell'utente dal server per poi mostrarle nell'imageView e nell'editText
+        try {
+            cc = new CommunicationController(this);
+            cc.getProfile(response -> {
+                        Gson gson = new Gson();
+                        Model.getInstance(this).setActualUser(gson.fromJson(response.toString(), User.class));
+                    },
+                    error -> Log.e(TAG, "Errore richiesta: " + error));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

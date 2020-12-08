@@ -46,6 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:src="@drawable/ic_round_add_24"
+        app:tint="@color/white"
         android:contentDescription="@string/fab_content_description"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottomMenu"

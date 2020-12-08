@@ -40,34 +40,58 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/postsSwiperefresh"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:padding="8dp">
+        app:layout_constraintLeft_toLeftOf="parent">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/postEditText"
-            android:hint="@string/new_post_hint"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/textAttachConstraint"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/attachButton" />
+            app:layout_constraintRight_toLeftOf="@+id/sendButton"
+            android:background="@drawable/layout_background"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp">
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/attachButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_round_attach_file_24"
-            app:layout_constraintLeft_toRightOf="@+id/postEditText"
-            app:layout_constraintRight_toLeftOf="@id/sendButton"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/postEditText"
+                android:hint="@string/new_post_hint"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/attachButton"/>
 
-        <androidx.appcompat.widget.AppCompatImageButton
+            <ImageButton
+                android:id="@+id/attachButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_round_attach_file_24"
+                app:layout_constraintLeft_toRightOf="@+id/postEditText"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <Button
             android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_round_send_24"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:icon="@drawable/ic_round_send_24"
+            app:iconSize="30dp"
+            app:iconGravity="textStart"
+            android:padding="0dp"
+            android:layout_margin="8dp"
+            app:iconPadding="0dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/attachButton"
+            app:layout_constraintLeft_toRightOf="@id/textAttachConstraint"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
