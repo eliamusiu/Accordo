@@ -23,8 +23,9 @@
 
             <ImageView
                 android:id="@+id/profileImageView"
+                android:src="@drawable/ic_round_account_circle_24"
                 android:layout_width="28dp"
-                android:layout_height="28dp"/>
+                android:layout_height="28dp" />
 
             <TextView
                 android:id="@+id/authorTextView"
@@ -37,10 +38,13 @@
 
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/contentImageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"/>
+            android:foreground="@drawable/image_post_foreground"
+            android:background="@drawable/layout_background"
+            android:adjustViewBounds="true"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp" />
 
     </LinearLayout>
 </LinearLayout>

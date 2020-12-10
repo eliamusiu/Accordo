@@ -3,16 +3,16 @@
     android:id="@+id/popupLinearLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/white"
-    android:foregroundTint="@color/white"
+    android:background="@drawable/layout_background"
+    android:backgroundTint="?attr/colorOnSurface"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:layout_margin="8dp">
     <Button
         android:id="@+id/attachImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_round_image_24"
-        android:drawableTint="@color/white"
         android:text="@string/attach_image"
         android:padding="16dp"
         android:layout_marginBottom="12dp"
@@ -23,7 +23,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_round_location_on_24"
-        android:drawableTint="@color/white"
         android:text="@string/attach_location"
         android:padding="16dp"
         android:layout_gravity="center"/>

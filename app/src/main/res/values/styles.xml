@@ -1,16 +1,22 @@
 <resources>
-
     <style name="Widget.Theme.Accordo.ButtonBar.Fullscreen" parent="">
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
 
-    <!-- stile FAB -->
-    <style name="Widget.Accordo.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
-        <item name="android:backgroundTint">?attr/colorPrimary</item>
+    <!-- Toolbar -->
+    <style name="Widget.Accordo.Toolbar" parent="Widget.MaterialComponents.Toolbar" >
+        <item name="android:background">?attr/colorPrimaryDark</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="elevation">4dp</item>
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
-    <!-- stile bordi arrotondati -->
+    <style name="Widget.Accordo.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <!-- Bordi arrotondati -->
     <style name="ShapeAppearance.Accordo.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">cut</item>
         <item name="cornerSize">4dp</item>
@@ -31,9 +37,62 @@
         <item name="cornerSize">50%</item>
     </style>
 
-    <!-- stile bottoni -->
+    <!-- Bottoni -->
     <style name="Widget.Accordo.MaterialButton" parent="Widget.MaterialComponents.Button">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Accordo.MaterialButton</item>
+        <item name="backgroundTint">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="android:drawableTint">?attr/colorOnSecondary</item>
     </style>
 
+    <!-- Bottone Allega -->
+    <style name="Widget.Accordo.AttachMaterialButton" parent="Widget.MaterialComponents.Button">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Accordo.MaterialButton</item>
+        <item name="backgroundTint">?attr/colorOnSurface</item>
+        <item name="elevation">0dp</item>
+        <item name="android:foregroundTint">?attr/colorOnPrimary</item>
+        <item name="android:drawableTint">?attr/colorOnBackground</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Bottone Posizione -->
+    <style name="Widget.Accordo.LocationMaterialButton" parent="Widget.MaterialComponents.Button">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Accordo.MaterialButton</item>
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:drawableTint">?attr/colorOnPrimary</item>
+    </style>
+
+    <!-- Popup Attach -->
+    <style name="Widget.Accordo.PopupWindow" parent="@style/Widget.AppCompat.PopupWindow">
+        <item name="android:dropDownHorizontalOffset">-8dp</item>
+        <item name="android:dropDownVerticalOffset">8dp</item>
+    </style>
+
+    <!-- Alert Dialog -->
+    <style name="MyThemeOverlayAlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Accordo.Dialog.Rounded</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Accordo.Dialog.Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">25dp</item>
+    </style>
+
+    <!-- Bottom sheet dialog -->
+    <style name="CustomBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheet</item>
+    </style>
+
+    <style name="CustomBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/CustomShapeAppearanceBottomSheetDialog</item>
+    </style>
+
+    <style name="CustomShapeAppearanceBottomSheetDialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">25dp</item>
+        <item name="cornerSizeTopLeft">25dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
 </resources>

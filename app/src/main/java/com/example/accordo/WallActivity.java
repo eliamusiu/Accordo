@@ -2,7 +2,7 @@ package com.example.accordo;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -10,16 +10,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
@@ -59,8 +57,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
 
         // Gestore evento su floating action button (aggiungi canale)
         findViewById(R.id.fab).setOnClickListener( v -> {
-            DialogFragment fragment = new AddChannelFragment();
-            fragment.show(getSupportFragmentManager(), " Add channel fragment");
+            createDialog();
         });
 
         // Gestore evento swipe to refresh (aggiorna canali)
@@ -68,6 +65,14 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         wallSwipeRefreshLayout.setOnRefreshListener(
                 () -> getWall()
         );
+
+        setToolbar();
+    }
+
+    private void setToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.wallToolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.app_name);
     }
 
     /**
@@ -200,6 +205,49 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_CANCELED && resultCode == RESULT_OK && requestCode == ACTION_REQUEST_GALLERY) {
             bottomSheetFragment.setProfilePicture(data.getData());
+        }
+    }
+
+    /**
+     * Crea e setta l'interfaccia del {@link MaterialAlertDialogBuilder}
+     */
+    private void createDialog() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+
+        // Setta l'interfaccia
+        builder.setTitle("Nuovo canale");
+        builder.setView(R.layout.fragment_add_channel);
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.fragment_add_channel, null);
+        builder.setView(view);
+        // Gestori eventi sui pulsanti del dialog
+        builder.setPositiveButton("Aggiungi", (dialog, which) -> addChannel(view));
+        builder.show();
+    }
+
+    /**
+     * Fa la richiesta di rete del {@link CommunicationController} prendendo il nome del canale
+     * dalla EditText
+     * @param view
+     */
+    private void addChannel(View view) {
+        CommunicationController cc = new CommunicationController(this);
+        final EditText et = view.findViewById(R.id.ctitleTextView);
+        String ctitle = et.getText().toString();
+
+        try {
+            cc.addChannel(ctitle,
+                    response -> {
+                        Log.d(TAG, "Canale creato");
+                        Snackbar snackbar = Snackbar
+                                .make(findViewById(R.id.bottomMenu),"Canale " + ctitle + " correttamente", Snackbar.LENGTH_LONG);
+                        snackbar.setAnchorView(findViewById(R.id.fab))
+                                .show();
+                    },
+                    error -> Log.d(TAG, "Errore creazione canale: " + error.toString())
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

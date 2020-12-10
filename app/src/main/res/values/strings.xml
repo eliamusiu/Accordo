@@ -10,7 +10,7 @@
     <string name="preference_file_sid">sid</string>
     <string name="preference_file_sid_default_value">no</string>
     <string name="edit_profile">Modifica</string>
-    <string name="new_post_hint">Scrivi qui il tuo post...</string>
+    <string name="new_post_hint">Scrivi un nuovo post...</string>
     <string name="preference_file_uid">uid</string>
     <string name="preference_file_uid_default_value">no</string>
     <string name="menu_refresh">Aggiorna</string>
@@ -20,4 +20,8 @@
     <string name="attach_location">Posizione</string>
     <string name="mapbox_access_token">pk.eyJ1IjoiZWxpYW11c2l1IiwiYSI6ImNraGFrcXFkbzFmZmIyeG81NW8zZTdhOWMifQ.KgW_Aaa7sK0LCV7u-GQ-rQ</string>
     <string name="send_location_fab_content_description">Invia posizione</string>
+    <string name="send_image_activity_title">Allega immagine</string>
+    <string name="send_location_activity_title" >La tua posizione</string>
+    <string name="post_location_activity_title">Posizione di </string>
+    <string name="edit_profile_title">Modifica il tuo profilo</string>
 </resources>

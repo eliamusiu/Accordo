@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -40,15 +41,12 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
 
-        // Setta la toolbar (titolo in alto della Activity)
-        androidx.appcompat.widget.Toolbar myToolbar = findViewById(R.id.channelToolbar);
-        setSupportActionBar(myToolbar);
-
         // Prende l'indice del'elemento della RecyclerView dei canali della WallActivity
         // che è stato cliccato
         Intent intent = getIntent();
         ctitle = intent.getStringExtra("ctitle");
-        getSupportActionBar().setTitle(ctitle);             // Setta il titolo della toolbar con il nome del canale
+
+        setToolbar();   // Setta la toolbar (titolo in alto della Activity)
 
         // Gestore evento di click sul bottone di invio del post
         findViewById(R.id.sendButton).setOnClickListener(v -> {
@@ -68,8 +66,23 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         // Gestore evento di click sul bottone "Allega" per mostrare il popUp con la sceltra tra immagine e posizione
         findViewById(R.id.attachButton).setOnClickListener(v -> {
             PopupAttach popupAttach = new PopupAttach();
-            popupAttach.showPopupWindow(v, findViewById(R.id.postConstraintLayout), this);
+            popupAttach.showPopupWindow(v, findViewById(R.id.sendButton), this);
         });
+    }
+
+    private void setToolbar() {
+        androidx.appcompat.widget.Toolbar myToolbar = findViewById(R.id.channelToolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(ctitle);             // Setta il titolo della toolbar con il nome del canale
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override
@@ -199,9 +212,9 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         ImageView contentImageView = (ImageView)v;
         //String imageContent = ((TextImagePost)Model.getInstance(this).getPost(position)).getContent();
         int imagePosition = Utils.getImagePositionInPosts(position, Model.getInstance(this).getAllPosts());
-        new StfalconImageViewer.Builder<>(this, images, (imageView, image) -> Glide.with(getApplicationContext())
+        new StfalconImageViewer.Builder<>(this, images, (imageView, image) -> Glide.with(this)
                 .load(image)
-                .into(imageView)).withStartPosition(imagePosition).withTransitionFrom(contentImageView).show(); // TODO: sistemare crash improvvisi al click sull'immagine
+                .into(imageView)).withStartPosition(imagePosition).withTransitionFrom(contentImageView).show(); // TODO: con withStartPosition crasha
     }
 
     /**

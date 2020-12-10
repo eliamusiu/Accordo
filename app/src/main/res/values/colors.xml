@@ -19,5 +19,25 @@
     <color name="light_blue_3">#17ACFC</color>
     <color name="light_blue_1">#1392D6</color>
 
+    <!-- Day -->
+    <color name="primaryColor">#283593</color>
+    <color name="primaryLightColor">#5f5fc4</color>
+    <color name="primaryDarkColor">#001064</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryColor">#c6ff00</color>
+    <color name="secondaryLightColor">#fdff58</color>
+    <color name="secondaryDarkColor">#90cc00</color>
+    <color name="secondaryTextColor">#000000</color>
+    <!-- Night -->
+    <color name="primaryNightColor">#9fa8da</color>
+    <color name="primaryNightLightColor">#d1d9ff</color>
+    <color name="primaryNightDarkColor">#6f79a8</color>
+    <color name="secondaryNightColor">#e6ee9c</color>
+    <color name="secondaryNightLightColor">#ffffce</color>
+    <color name="secondaryNightDarkColor">#b3bc6d</color>
+    <color name="primaryNightTextColor">#000000</color>
+    <color name="secondaryNightTextColor">#000000</color>
+
     <color name="light_grey">#DCDCDC</color>
+    <color name="dark_grey">#323232</color>
 </resources>

@@ -52,6 +52,8 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         super.onCreate(savedInstanceState);
         createMap(savedInstanceState);
 
+        setToolbar();
+
         // Callback chiamata quando si cambia posizione. Sposta di conseguenza la camera
         locationCallback = new LocationCallback() {
             @Override
@@ -92,6 +94,34 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
                 e.printStackTrace();
             }
         });
+    }
+
+    /**
+     * Inserisce nella toolbar il bottone per tornare indietro della ActionBar
+     */
+    private void setToolbar() {
+        androidx.appcompat.widget.Toolbar myToolbar = findViewById(R.id.sendLocationToolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    /**
+     * Imposta il titolo della toolbar con il nome dell'utente che ha inviato la posizione
+     * @param post
+     */
+    private void setToolbarTitle(Post post) {
+        if (post.getName() != null) {
+            getSupportActionBar().setTitle("Posizione di " + post.getName());
+        } else {
+            getSupportActionBar().setTitle("Posizione di " + getResources().getString(R.string.unknown_author));
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     /**
@@ -136,6 +166,7 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
     private void setMapBehavior() {
         int index = getIntent().getIntExtra("postIndex", -1);
         if (index == -1) {
+            getSupportActionBar().setTitle(R.string.send_location_activity_title);
             getLastLocation(); // imposta la mappa sulla posizione dell'utente per l'invio
         } else {
             setCameraAtPostPosition(index); // imposta la mappa sulla posizione del post
@@ -147,8 +178,11 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
      * @param index Indice del post di tipo posizione che è stato cliccato
      */
     private void setCameraAtPostPosition(int index) {
-        String lat = ((LocationPost) Model.getInstance(this).getPost(index)).getLat();
-        String lon = ((LocationPost) Model.getInstance(this).getPost(index)).getLon();
+        Post post = Model.getInstance(this).getPost(index);
+
+        setToolbarTitle(post);
+        String lat = ((LocationPost) post).getLat();
+        String lon = ((LocationPost) post).getLon();
 
         Double dLat = Double.valueOf(lat);
         Double dLon = Double.valueOf(lon);

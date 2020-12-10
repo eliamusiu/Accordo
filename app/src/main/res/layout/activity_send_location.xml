@@ -4,8 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SendLocationActivity"
-    >
+    tools:context=".SendLocationActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/sendLocationToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:theme="@style/Widget.Accordo.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/mapView"/>
 
     <com.mapbox.mapboxsdk.maps.MapView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/sendLocationToolbar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/sendLocationFab"

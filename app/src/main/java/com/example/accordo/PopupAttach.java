@@ -34,12 +34,14 @@ public class PopupAttach {
 
         //Create a window with our parameters
         PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.GRAY));
+        popupWindow.setElevation(Utils.getPixelsFromDp(16f, context));
 
         // Imposta la posizione del popup sullo schermo
         popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        popupWindow.showAsDropDown(newPostView, 0, -newPostView.getHeight() - popupView.getMeasuredHeight(), Gravity.RIGHT);
-        //popupWindow.setAnimationStyle(android.R.anim.fade_in);
+        int marginX = Utils.getPixelsFromDp(8f, context);
+        int marginY = Utils.getPixelsFromDp(16f, context);
+        popupWindow.showAsDropDown(newPostView, -popupView.getMeasuredWidth() - marginX,
+                -newPostView.getHeight() - popupView.getMeasuredHeight() - marginY);
 
         // Gestore evento di click su bottone allega immagine
         popupView.findViewById(R.id.attachImageButton).setOnClickListener(v -> {

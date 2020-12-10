@@ -1,10 +1,12 @@
 package com.example.accordo;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.util.DisplayMetrics;
 
 import org.w3c.dom.Text;
 
@@ -113,5 +115,17 @@ public class Utils {
         Bitmap cropImg = Bitmap.createBitmap(bitmap, cropW, cropH, newWidth, newHeight);
 
         return cropImg;
+    }
+
+    /**
+     * Trasforma i dp in pixel
+     * @param dp
+     * @param context
+     * @return pixel
+     */
+    public static int getPixelsFromDp(float dp, Context context) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        float fpixels = metrics.density * dp;
+        return (int) (fpixels + 0.5f);
     }
 }

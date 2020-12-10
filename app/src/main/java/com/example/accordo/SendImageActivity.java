@@ -25,6 +25,8 @@ public class SendImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_image);
 
+        setToolbar();
+
         String ctitle = getIntent().getStringExtra("ctitle");
 
         Bitmap imageBitmap = Utils.getBitmapFromUri(getIntent().getParcelableExtra("imagePath"), getContentResolver());
@@ -49,5 +51,18 @@ public class SendImageActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
+    }
+
+    private void setToolbar() {
+        androidx.appcompat.widget.Toolbar myToolbar = findViewById(R.id.sendImageToolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }
