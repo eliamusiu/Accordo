@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -196,6 +197,11 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         linearLayoutManager.setStackFromEnd(true);
         rv.setLayoutManager(linearLayoutManager);
         rv.scrollToPosition(0);
+        rv.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            if (bottom < oldBottom) {
+                rv.scrollBy(0, oldBottom - bottom);
+            }
+        });
         adapter = new PostAdapter(this, this);
         rv.setAdapter(adapter);
     }

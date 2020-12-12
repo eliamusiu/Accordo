@@ -29,7 +29,7 @@
         <ImageView
             android:id="@+id/userProfileImageView"
             android:foreground="@drawable/image_post_foreground"
-            android:background="@drawable/layout_background"
+            android:background="@drawable/their_post_background"
             android:adjustViewBounds="true"
             android:src="@drawable/ic_round_account_circle_24"
             android:layout_width="64dp"

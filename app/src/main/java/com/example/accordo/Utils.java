@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 import org.w3c.dom.Text;
 
@@ -127,5 +128,11 @@ public class Utils {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         float fpixels = metrics.density * dp;
         return (int) (fpixels + 0.5f);
+    }
+
+    public static int getThemeAttr(int attr, Context context) {
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(attr, typedValue, true);
+        return typedValue.data;
     }
 }

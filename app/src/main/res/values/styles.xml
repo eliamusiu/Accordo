@@ -1,21 +1,4 @@
 <resources>
-    <style name="Widget.Theme.Accordo.ButtonBar.Fullscreen" parent="">
-        <item name="android:background">@color/black_overlay</item>
-        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
-    </style>
-
-    <!-- Toolbar -->
-    <style name="Widget.Accordo.Toolbar" parent="Widget.MaterialComponents.Toolbar" >
-        <item name="android:background">?attr/colorPrimaryDark</item>
-        <item name="titleTextColor">@color/white</item>
-        <item name="elevation">4dp</item>
-        <item name="colorControlNormal">@color/white</item>
-    </style>
-
-    <style name="Widget.Accordo.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="colorControlNormal">@color/white</item>
-    </style>
-
     <!-- Bordi arrotondati -->
     <style name="ShapeAppearance.Accordo.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">cut</item>
@@ -37,30 +20,37 @@
         <item name="cornerSize">50%</item>
     </style>
 
-    <!-- Bottoni -->
+    <!-- White toolbar arrow and refresh -->
+    <style name="Widget.Accordo.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:drawableTint">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <!-- Buttons -->
     <style name="Widget.Accordo.MaterialButton" parent="Widget.MaterialComponents.Button">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Accordo.MaterialButton</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:drawableTint">?attr/colorOnPrimary</item>
+    </style>
+
+    <!-- Important buttons (send) -->
+    <style name="Widget.Accordo.SendMaterialButton" parent="Widget.MaterialComponents.Button">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Accordo.MaterialButton</item>
         <item name="backgroundTint">?attr/colorSecondary</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="android:drawableTint">?attr/colorOnSecondary</item>
     </style>
 
-    <!-- Bottone Allega -->
+    <!-- Attach Button -->
     <style name="Widget.Accordo.AttachMaterialButton" parent="Widget.MaterialComponents.Button">
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Accordo.MaterialButton</item>
-        <item name="backgroundTint">?attr/colorOnSurface</item>
         <item name="elevation">0dp</item>
-        <item name="android:foregroundTint">?attr/colorOnPrimary</item>
-        <item name="android:drawableTint">?attr/colorOnBackground</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
 
-    <!-- Bottone Posizione -->
-    <style name="Widget.Accordo.LocationMaterialButton" parent="Widget.MaterialComponents.Button">
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Accordo.MaterialButton</item>
-        <item name="backgroundTint">?attr/colorPrimary</item>
-        <item name="android:textColor">?attr/colorOnPrimary</item>
-        <item name="android:drawableTint">?attr/colorOnPrimary</item>
+    <!-- Post -->
+    <style name="Widget.Accordo.PostLinearLayout" parent="">
+        <item name="elevation">4dp</item>
     </style>
 
     <!-- Popup Attach -->

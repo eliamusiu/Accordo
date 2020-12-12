@@ -42,9 +42,8 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
             getSid();                       // Richiesta di rete per ottenere il sid
         } else {                                                                    // Se c'è
             getWall();
+            getActualUserProfile(); //ottiene l'utente attuale
         }
-
-        getActualUserProfile(); //ottiene l'utente attuale
 
         // Gestore evento sulla barra di navigazione (modifica profilo)
         ((BottomNavigationView)findViewById(R.id.bottom_navigation)).setOnNavigationItemSelectedListener( item -> {
@@ -99,6 +98,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
                         .make(findViewById(R.id.bottomMenu),"Nuovo utente creato", Snackbar.LENGTH_LONG);
                 snackbar.setAnchorView(R.id.fab)
                         .show();
+                getActualUserProfile(); //ottiene l'utente attuale
                 getWall();
             } catch (JSONException e) {
                 e.printStackTrace();

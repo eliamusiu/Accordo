@@ -1,5 +1,8 @@
 package com.example.accordo;
 
+import android.content.Context;
+import android.graphics.PorterDuff;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -12,13 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 public class PostViewHolder extends RecyclerView.ViewHolder {
     private TextView  authorTextView, contentTextView;
     private ImageView contentImageView, profileImageView;
-    private LinearLayout postLinearLayout, authorLinearLayout;
+    private LinearLayout postContainerLinearLayout, postLinearLayout, authorLinearLayout;
     private Button locationLinearLayout;
     private OnPostRecyclerViewClickListener recyclerViewClickListener;
 
     public PostViewHolder(@NonNull View itemView, OnPostRecyclerViewClickListener recyclerViewClickListener) {
         super(itemView);
         this.recyclerViewClickListener = recyclerViewClickListener;
+        postContainerLinearLayout = itemView.findViewById(R.id.postContainerLinearLayout);
         postLinearLayout = itemView.findViewById(R.id.postLinearLayout);
         authorLinearLayout = itemView.findViewById(R.id.authorLinearLayout);
         authorTextView = itemView.findViewById(R.id.authorTextView);
@@ -70,12 +74,31 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * Allinea a destra i post pubblicati dall'utente attualmente loggato e nasconde il suo nome
-     * e la sua immagine di profilo
+     * Allinea a destra i post pubblicati dall'utente attualmente loggato, nasconde il suo nome
+     * e la sua immagine di profilo, mette il layout "fumetto" di invio e il colorOnPrimary per il
+     * testo (se è un post di tipo testo)
      */
-    public void setActualUserStyleForPost() {
-        postLinearLayout.setGravity(Gravity.RIGHT);
+    public void setActualUserStyleForPost(Context context) {
+        postContainerLinearLayout.setGravity(Gravity.RIGHT);
         authorLinearLayout.setVisibility(View.GONE);
+        postLinearLayout.setBackgroundResource(R.drawable.my_post_background);
+        if (contentTextView != null) {
+            contentTextView.setTextColor(Utils.getThemeAttr(R.attr.colorOnPrimary, context));
+        }
+    }
+
+    /**
+     * Allinea a destra i post pubblicati dagli altri utenti, rende visibile il nome dell'utente
+     * e la sua immagine di profilo, mette il layout "fumetto" di ricezione e il colorOnBackground
+     * per il testo (se è un post di tipo testo)
+     */
+    public void setOtherUsersStyleForPost(Context context) {
+        postContainerLinearLayout.setGravity(Gravity.LEFT);
+        authorLinearLayout.setVisibility(View.VISIBLE);
+        postLinearLayout.setBackgroundResource(R.drawable.their_post_background);
+        if (contentTextView != null) {
+            contentTextView.setTextColor(Utils.getThemeAttr(R.attr.colorOnBackground, context));
+        }
     }
 
     /**

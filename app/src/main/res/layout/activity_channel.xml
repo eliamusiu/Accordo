@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/top_root"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ChannelActivity">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/channelToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="4dp"
+        style="@style/Widget.Accordo.ActionBar"
         app:theme="@style/Widget.Accordo.ActionBar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -46,12 +49,14 @@
             android:id="@+id/textPostConstraintLayout"
             android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/my_post_background"
+            android:backgroundTint="?attr/colorPost"
+            style="@style/Widget.Accordo.PostLinearLayout"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/sendButton"
-            android:background="@drawable/layout_background"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp">
+            app:layout_constraintRight_toLeftOf="@+id/sendButton">
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/postEditText"
@@ -69,16 +74,16 @@
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:drawableLeft="@drawable/ic_round_attach_file_24"
-                android:layout_marginRight="8dp"
                 android:layout_marginLeft="8dp"
                 android:insetLeft="0dp"
                 android:insetTop="0dp"
                 android:insetRight="0dp"
                 android:insetBottom="0dp"
-                style="@style/Widget.Accordo.AttachMaterialButton"
                 app:layout_constraintLeft_toRightOf="@+id/postEditText"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:drawableTint="?attr/colorOnBackground"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -95,7 +100,8 @@
             android:insetBottom="0dp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toRightOf="@id/textPostConstraintLayout"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/Widget.Accordo.SendMaterialButton"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

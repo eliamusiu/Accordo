@@ -3,11 +3,14 @@
     android:id="@+id/popupLinearLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/layout_background"
-    android:backgroundTint="?attr/colorOnSurface"
     android:orientation="vertical"
-    android:padding="24dp"
-    android:layout_margin="8dp">
+    android:paddingRight="12dp"
+    android:paddingLeft="12dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="12dp"
+    android:layout_margin="8dp"
+    android:background="@drawable/rounded_background_layout"
+    android:backgroundTint="?attr/colorPost">
     <Button
         android:id="@+id/attachImageButton"
         android:layout_width="wrap_content"
@@ -16,6 +19,8 @@
         android:text="@string/attach_image"
         android:padding="16dp"
         android:layout_marginBottom="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
         android:layout_gravity="center"/>
 
     <Button
@@ -25,5 +30,8 @@
         android:drawableLeft="@drawable/ic_round_location_on_24"
         android:text="@string/attach_location"
         android:padding="16dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
         android:layout_gravity="center"/>
 </LinearLayout>

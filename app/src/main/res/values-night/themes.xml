@@ -1,21 +1,28 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Accordo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Accordo" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/primaryNightColor</item>
-        <item name="colorPrimaryVariant">@color/primaryNightDarkColor</item>
-        <item name="colorOnPrimary">@color/primaryNightTextColor</item>
+        <item name="colorPrimary">@color/lilac</item>
+        <item name="colorPrimaryVariant">@color/darkLilac</item>
+        <item name="colorOnPrimary">@color/greyBlack</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/secondaryNightColor</item>
-        <item name="colorSecondaryVariant">@color/secondaryNightDarkColor</item>
-        <item name="colorOnSecondary">@color/secondaryNightTextColor</item>
-        <item name="colorOnSurface">@color/dark_grey</item>
-        <item name="colorOnBackground">@color/white</item>
-        <!-- Status bar color. -->
+        <item name="colorSecondary">@color/fadedYellow</item>
+        <item name="colorSecondaryVariant">@color/darkFadedYellow</item>
+        <item name="colorOnSecondary">@color/greyBlack</item>
+
+        <item name="colorSurface">@color/dark_grey</item>
+        <item name="colorPrimarySurface">?attr/colorSurface</item>
+        <item name="colorOnPrimarySurface">@color/lilac</item>
+
+        <item name="colorPost">@color/dark_grey2</item>
+
+        <!-- Status bar and navigation color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/black</item>
-        <!-- Toolbar -->
-        <item name="toolbarStyle">@style/Widget.Accordo.Toolbar</item>
-        <item name="colorPrimaryDark">@color/dark_grey</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+
+        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
+        <item name="navigationViewStyle">@style/Widget.MaterialComponents.BottomNavigationView.PrimarySurface</item>
+
         <!-- Stile bottoni -->
         <item name="materialButtonStyle">@style/Widget.Accordo.MaterialButton</item>
         <!-- Popup Attach -->
@@ -27,7 +34,5 @@
     </style>
 
     <style name="ThemeOverlay.Accordo.FullscreenContainer" parent="">
-        <item name="fullscreenBackgroundColor">@color/light_blue_900</item>
-        <item name="fullscreenTextColor">@color/light_blue_A400</item>
     </style>
 </resources>

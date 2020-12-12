@@ -1,43 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
+    <color name="greyBlack">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="light_blue_600">#FF039BE5</color>
-    <color name="light_blue_900">#FF01579B</color>
-    <color name="light_blue_A200">#FF40C4FF</color>
-    <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="black">#000000</color>
     <color name="black_overlay">#66000000</color>
 
-    <color name="blue">#1078B0</color>
-    <color name="dark_blue">#0A4C70</color>
-    <color name="light_blue_2">#16A3F0</color>
-    <color name="light_blue_3">#17ACFC</color>
-    <color name="light_blue_1">#1392D6</color>
-
     <!-- Day -->
-    <color name="primaryColor">#283593</color>
-    <color name="primaryLightColor">#5f5fc4</color>
-    <color name="primaryDarkColor">#001064</color>
-    <color name="primaryTextColor">#ffffff</color>
-    <color name="secondaryColor">#c6ff00</color>
-    <color name="secondaryLightColor">#fdff58</color>
-    <color name="secondaryDarkColor">#90cc00</color>
-    <color name="secondaryTextColor">#000000</color>
+    <color name="blue">#283593</color>
+    <color name="lightBlue">#5f5fc4</color>
+    <color name="darkBlue">#001064</color>
+    <color name="lime">#c6ff00</color>
+    <color name="yellowLime">#fdff58</color>
+    <color name="greenLime">#90cc00</color>
     <!-- Night -->
-    <color name="primaryNightColor">#9fa8da</color>
-    <color name="primaryNightLightColor">#d1d9ff</color>
-    <color name="primaryNightDarkColor">#6f79a8</color>
-    <color name="secondaryNightColor">#e6ee9c</color>
-    <color name="secondaryNightLightColor">#ffffce</color>
-    <color name="secondaryNightDarkColor">#b3bc6d</color>
+    <color name="lilac">#9fa8da</color>
+    <color name="lightLilac">#d1d9ff</color>
+    <color name="darkLilac">#6f79a8</color>
+    <color name="fadedYellow">#e6ee9c</color>
+    <color name="lightFadedYellow">#ffffce</color>
+    <color name="darkFadedYellow">#b3bc6d</color>
     <color name="primaryNightTextColor">#000000</color>
     <color name="secondaryNightTextColor">#000000</color>
 
-    <color name="light_grey">#DCDCDC</color>
-    <color name="dark_grey">#323232</color>
+    <color name="light_grey">#F2F2F2</color>
+    <color name="dark_grey2">#2D2D2D</color>
+    <color name="dark_grey">#121212</color>
 </resources>

@@ -133,7 +133,7 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_send_location);
 
-        mapView = (MapView) findViewById(R.id.mapView);
+        mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -167,9 +167,9 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         int index = getIntent().getIntExtra("postIndex", -1);
         if (index == -1) {
             getSupportActionBar().setTitle(R.string.send_location_activity_title);
-            getLastLocation(); // imposta la mappa sulla posizione dell'utente per l'invio
+            getLastLocation();                  // Imposta la mappa sulla posizione dell'utente per l'invio
         } else {
-            setCameraAtPostPosition(index); // imposta la mappa sulla posizione del post
+            setCameraAtPostPosition(index);     // Imposta la mappa sulla posizione del post
         }
     }
 
@@ -232,7 +232,7 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
     /**
      * Inizializza il client provider per la posizione
      */
-    private void setFusedLocation() {
+    private void setFusedLocation() {   // TODO: controllare se la posizione è attiva, altrimenti disabilitare bottone invia
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         requestingLocationUpdates = true;
         startLocationUpdates();

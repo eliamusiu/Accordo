@@ -52,8 +52,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * Ottiene da {@link Model#getPost(int)} il {@link Post} e da {@link Model#getUser(String)}
      * lo {@link User} per prendere la sua immagine di profilo da passare al {@link PostViewHolder}.
      * Chiama {@link PostViewHolder#setUserName(String)},
-     * {@link #updateViewHolder(PostViewHolder, Post)} e
-     * {@link PostViewHolder#setProfilePicture(String)}
+     * {@link #updateViewHolder(PostViewHolder, Post)},
+     * {@link PostViewHolder#setProfilePicture(User)} e
+     * {@link PostViewHolder#setActualUserStyleForPost(Context)}
      * @param holder
      * @param position
      */
@@ -67,7 +68,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         updateViewHolder(viewHolder, post); // aggiorna il contenuto in base al tipo di post
         viewHolder.setProfilePicture(postAuthor);// viene settata l'immagine di profilo per ogni post
         if (Model.getInstance(context).getActualUser().getUid().equals(post.getUid())) {
-            viewHolder.setActualUserStyleForPost();
+            viewHolder.setActualUserStyleForPost(context);
+        } else {
+            viewHolder.setOtherUsersStyleForPost(context);
         }
     }
 
