@@ -71,7 +71,7 @@
 
     <style name="ShapeAppearanceOverlay.Accordo.Dialog.Rounded" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">25dp</item>
+        <item name="cornerSize">20dp</item>
     </style>
 
     <!-- Bottom sheet dialog -->
@@ -85,8 +85,8 @@
 
     <style name="CustomShapeAppearanceBottomSheetDialog" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopRight">25dp</item>
-        <item name="cornerSizeTopLeft">25dp</item>
+        <item name="cornerSizeTopRight">20dp</item>
+        <item name="cornerSizeTopLeft">20dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>

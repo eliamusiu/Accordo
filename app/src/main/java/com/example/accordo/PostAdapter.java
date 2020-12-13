@@ -37,13 +37,13 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         switch (viewType) {
             case POST_TYPE_TEXT:
                 View tView = inflater.inflate(R.layout.text_post_list_row, parent, false);
-                return new PostViewHolder(tView, recyclerViewClickListener);
+                return new PostViewHolder(tView, context, recyclerViewClickListener);
             case POST_TYPE_IMAGE:
                 View iView = inflater.inflate(R.layout.image_post_list_row, parent, false);
-                return new PostViewHolder(iView, recyclerViewClickListener);
+                return new PostViewHolder(iView, context, recyclerViewClickListener);
             case POST_TYPE_LOCATION:
                 View lView = inflater.inflate(R.layout.location_post_list_row, parent, false);
-                return new PostViewHolder(lView, recyclerViewClickListener);
+                return new PostViewHolder(lView, context, recyclerViewClickListener);
         }
         return null;
     }
@@ -54,7 +54,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * Chiama {@link PostViewHolder#setUserName(String)},
      * {@link #updateViewHolder(PostViewHolder, Post)},
      * {@link PostViewHolder#setProfilePicture(User)} e
-     * {@link PostViewHolder#setActualUserStyleForPost(Context)}
+     * {@link PostViewHolder#setActualUserStyleForPost()}
      * @param holder
      * @param position
      */
@@ -68,9 +68,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         updateViewHolder(viewHolder, post); // aggiorna il contenuto in base al tipo di post
         viewHolder.setProfilePicture(postAuthor);// viene settata l'immagine di profilo per ogni post
         if (Model.getInstance(context).getActualUser().getUid().equals(post.getUid())) {
-            viewHolder.setActualUserStyleForPost(context);
+            viewHolder.setActualUserStyleForPost();
         } else {
-            viewHolder.setOtherUsersStyleForPost(context);
+            viewHolder.setOtherUsersStyleForPost();
         }
     }
 

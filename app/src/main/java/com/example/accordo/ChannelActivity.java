@@ -131,7 +131,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
             images.clear();
             for (TextImagePost imagePost : Model.getInstance(this).getAllImagePosts()) {
                 if (imagePost.getContent() != null) {
-                    images.add(Utils.getBitmapFromBase64(imagePost.getContent()));
+                    images.add(Utils.getBitmapFromBase64(imagePost.getContent(), this));
                 }
             }
             Collections.reverse(images);

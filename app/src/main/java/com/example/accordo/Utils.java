@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 
 import org.w3c.dom.Text;
@@ -22,15 +23,26 @@ import java.util.stream.Collectors;
 
 public class Utils {
 
+    private static final String TAG = Utils.class.toString();
+
     /**
-     * Trasforma l'immagine da {@link Base64} a {@link Bitmap}
+     * Trasforma l'immagine da {@link Base64} a {@link Bitmap}. Mette un'immagine predefinita se
+     * il formato non è supportato
      * @param base64 Immagine  da trasformare
-     * @return Immagine {@link Bitmap}
+     * @param context
+     * @return immagine {@link Bitmap}
      */
-    public static Bitmap getBitmapFromBase64(String base64) {       // TODO: gestire errore "java.lang.IllegalArgumentException: bad base-64"
-        byte[] decodedString = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        return decodedByte;
+    public static Bitmap getBitmapFromBase64(String base64, Context context) {
+        try {
+            byte[] decodedString = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            return decodedByte;
+        } catch (IllegalArgumentException exception) {
+            Log.e(TAG, "Formato immagine non supportato");
+            Bitmap brokenImageBitmap = BitmapFactory.decodeResource(context.getResources(), // TODO: ritorna null
+                    R.drawable.ic_round_broken_image_24);
+            return brokenImageBitmap;
+        }
     }
 
     /**

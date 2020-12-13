@@ -18,10 +18,12 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     private LinearLayout postContainerLinearLayout, postLinearLayout, authorLinearLayout;
     private Button locationLinearLayout;
     private OnPostRecyclerViewClickListener recyclerViewClickListener;
+    private Context context;
 
-    public PostViewHolder(@NonNull View itemView, OnPostRecyclerViewClickListener recyclerViewClickListener) {
+    public PostViewHolder(@NonNull View itemView, Context context, OnPostRecyclerViewClickListener recyclerViewClickListener) {
         super(itemView);
         this.recyclerViewClickListener = recyclerViewClickListener;
+        this.context = context;
         postContainerLinearLayout = itemView.findViewById(R.id.postContainerLinearLayout);
         postLinearLayout = itemView.findViewById(R.id.postLinearLayout);
         authorLinearLayout = itemView.findViewById(R.id.authorLinearLayout);
@@ -48,7 +50,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public void updateContent(TextImagePost post) {
         if (post.getContent() != null) {
             contentImageView.setClipToOutline(true);
-            contentImageView.setImageBitmap(Utils.getBitmapFromBase64(post.getContent()));
+            contentImageView.setImageBitmap(Utils.getBitmapFromBase64(post.getContent(), context));
             contentImageView.setOnClickListener(this::onImageClick);
         }
     }
@@ -78,7 +80,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
      * e la sua immagine di profilo, mette il layout "fumetto" di invio e il colorOnPrimary per il
      * testo (se è un post di tipo testo)
      */
-    public void setActualUserStyleForPost(Context context) {
+    public void setActualUserStyleForPost() {
         postContainerLinearLayout.setGravity(Gravity.RIGHT);
         authorLinearLayout.setVisibility(View.GONE);
         postLinearLayout.setBackgroundResource(R.drawable.my_post_background);
@@ -92,7 +94,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
      * e la sua immagine di profilo, mette il layout "fumetto" di ricezione e il colorOnBackground
      * per il testo (se è un post di tipo testo)
      */
-    public void setOtherUsersStyleForPost(Context context) {
+    public void setOtherUsersStyleForPost() {
         postContainerLinearLayout.setGravity(Gravity.LEFT);
         authorLinearLayout.setVisibility(View.VISIBLE);
         postLinearLayout.setBackgroundResource(R.drawable.their_post_background);
@@ -109,7 +111,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         if (postAuthor == null || postAuthor.getPicture().equals("null")) {     // TODO: vedi italiantitan su canale 1
             profileImageView.setImageResource(R.drawable.ic_round_account_circle_24);
         } else {
-            profileImageView.setImageBitmap(Utils.getBitmapFromBase64(postAuthor.getPicture()));
+            profileImageView.setImageBitmap(Utils.getBitmapFromBase64(postAuthor.getPicture(), context));
         }
     }
 

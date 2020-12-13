@@ -42,10 +42,11 @@
 
         <ImageView
             android:id="@+id/contentImageView"
+            android:foreground="@drawable/image_post_foreground"
+            android:background="@drawable/rounded_background_layout"
             android:adjustViewBounds="true"
             android:layout_width="wrap_content"
             android:layout_height="100dp" />
-        <!--android:foreground="@drawable/image_post_foreground"
-                    android:background="@drawable/their_post_background"-->
+
     </LinearLayout>
 </LinearLayout>

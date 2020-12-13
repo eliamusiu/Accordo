@@ -78,7 +78,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
             profileNameEditText.setText(name.toString());
         }
         if (picture != null) {
-            profilePictureImageView.setImageBitmap(Utils.getBitmapFromBase64(picture.toString()));
+            profilePictureImageView.setImageBitmap(Utils.getBitmapFromBase64(picture.toString(), getContext()));
         }
     }
 
