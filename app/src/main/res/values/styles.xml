@@ -20,11 +20,15 @@
         <item name="cornerSize">50%</item>
     </style>
 
-    <!-- White toolbar arrow and refresh -->
+    <!-- Primary text color of toolbar arrow, text and refresh-->
     <style name="Widget.Accordo.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:textColorSecondary">@color/white</item>
-        <item name="android:drawableTint">@color/white</item>
-        <item name="colorControlNormal">@color/white</item>
+        <item name="android:drawableTint">?attr/colorPrimaryDark</item>
+        <item name="colorControlNormal">?attr/colorPrimaryDark</item>
+    </style>
+
+    <style name="Widget.Accordo.Toolbar" parent="Widget.MaterialComponents.Toolbar.PrimarySurface">
+        <item name="titleTextColor">?attr/colorPrimaryDark</item>
     </style>
 
     <!-- Buttons -->
@@ -57,6 +61,7 @@
     <style name="Widget.Accordo.PopupWindow" parent="@style/Widget.AppCompat.PopupWindow">
         <item name="android:dropDownHorizontalOffset">-8dp</item>
         <item name="android:dropDownVerticalOffset">8dp</item>
+        <item name="elevation">16dp</item>
     </style>
 
     <!-- Alert Dialog -->

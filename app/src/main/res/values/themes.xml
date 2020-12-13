@@ -12,14 +12,14 @@
         <item name="colorSurface">@color/white</item>
         <item name="colorPrimarySurface">?attr/colorPrimary</item>
         <item name="colorOnPrimarySurface">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
 
         <item name="colorPost">@color/light_grey</item>
 
         <!-- Status bar and navigation bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
-
-        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
+        <item name="toolbarStyle">@style/Widget.Accordo.Toolbar</item>
 
         <!-- Stile bottoni -->
         <item name="materialButtonStyle">@style/Widget.Accordo.MaterialButton</item>
