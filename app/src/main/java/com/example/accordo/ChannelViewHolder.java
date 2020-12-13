@@ -32,7 +32,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
             channelTitle.setTypeface(null, Typeface.BOLD);
         }*/
     }
-
+    
     public void onClick(View v) {
         recyclerViewClickListener.onRecyclerViewClick(v, getAdapterPosition());
     }

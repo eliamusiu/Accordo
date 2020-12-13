@@ -3,6 +3,7 @@ package com.example.accordo;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import androidx.annotation.RequiresApi;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
@@ -68,7 +71,6 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
 
     /**
      * Inserisce il nome dell'utente nella EditText e l'immagine del profilo nella ImageView
-     * @param response Json contente "name" e "picture" del profilo
      */
     private void setProfileInfo() {
         User actualUser = Model.getInstance(context).getActualUser();
