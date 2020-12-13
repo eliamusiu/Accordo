@@ -24,4 +24,9 @@
     <string name="send_location_activity_title" >La tua posizione</string>
     <string name="post_location_activity_title">Posizione di </string>
     <string name="edit_profile_title">Modifica il tuo profilo</string>
+    <string name="send">Invia</string>
+    <string name="gps_network_not_enabled">Vuoi attivare i servizi di geolocalizzazione?</string>
+    <string name="open_location_settings">Vai a impostazioni</string>
+    <string name="Cancel">Annulla</string>
+    <string name="disabled_location_services">Geolocalizzazione disattivata</string>
 </resources>

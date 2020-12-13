@@ -11,9 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="4dp"
+        style="@style/Widget.Accordo.ActionBar"
+        app:theme="@style/Widget.Accordo.ActionBar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@id/mapView"/>
+
 
     <com.mapbox.mapboxsdk.maps.MapView
         xmlns:android="http://schemas.android.com/apk/res/android"

@@ -53,6 +53,7 @@ public class PopupAttach {
         popupView.findViewById(R.id.attachLocationButton).setOnClickListener(v -> {
             popupWindow.dismiss();
             ((ChannelActivity)context).onAttachClick("l");
+
         });
     }
 }

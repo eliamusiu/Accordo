@@ -1,6 +1,7 @@
 package com.example.accordo;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -8,11 +9,16 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
@@ -21,6 +27,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
@@ -46,6 +53,7 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
     private MapboxMap myMapboxMap;
     private LocationCallback locationCallback;
     private LatLng currentLocation;
+    private Boolean locationServicesEnabled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,10 +175,56 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         int index = getIntent().getIntExtra("postIndex", -1);
         if (index == -1) {
             getSupportActionBar().setTitle(R.string.send_location_activity_title);
-            getLastLocation();                  // Imposta la mappa sulla posizione dell'utente per l'invio
+
+            askToTurnOnLocation();
+           // getLastLocation();                 // Imposta la mappa sulla posizione dell'utente per l'invio
         } else {
             setCameraAtPostPosition(index);     // Imposta la mappa sulla posizione del post
         }
+    }
+
+    private void askToTurnOnLocation() {
+        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+
+            // Setta l'interfaccia
+            builder.setTitle(R.string.disabled_location_services);
+            builder.setMessage(R.string.gps_network_not_enabled);
+            // Gestori eventi sui pulsanti del dialog
+            builder.setPositiveButton(R.string.open_location_settings, (paramDialogInterface, paramInt) -> {
+                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                locationServicesEnabled = true;
+            });
+            builder.setNegativeButton(R.string.Cancel,null);
+            builder.show();
+
+
+           /* new MaterialAlertDialogBuilder().Builder(this, AlertDialog.)
+                    .setMessage(R.string.gps_network_not_enabled)
+                    .
+                    .setPositiveButton(R.string.open_location_settings, (DialogInterface.OnClickListener) (paramDialogInterface, paramInt) -> {
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        locationServicesEnabled = true;
+                    })
+                    .setNegativeButton(R.string.Cancel,null)
+                    .show();*/
+        } else {
+            getLastLocation();
+        }
+
     }
 
     /**
@@ -302,6 +356,10 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
     protected void onResume() {
         super.onResume();
         mapView.onResume();
+        if (locationServicesEnabled) {
+            askToTurnOnLocation();
+        }
+
         if (requestingLocationUpdates) {
             startLocationUpdates();
         }
