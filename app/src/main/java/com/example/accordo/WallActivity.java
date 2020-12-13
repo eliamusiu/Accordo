@@ -61,6 +61,8 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
 
         // Gestore evento swipe to refresh (aggiorna canali)
         wallSwipeRefreshLayout = findViewById(R.id.wallSwiperefresh);
+        wallSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(Utils.getThemeAttr(R.attr.colorPost, this));
+        wallSwipeRefreshLayout.setColorSchemeColors(Utils.getThemeAttr(R.attr.colorPrimary, this));
         wallSwipeRefreshLayout.setOnRefreshListener(
                 () -> getWall()
         );
@@ -69,7 +71,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
     }
 
     private void setToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.wallToolbar);
+        Toolbar toolbar = findViewById(R.id.wallToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.app_name);
     }

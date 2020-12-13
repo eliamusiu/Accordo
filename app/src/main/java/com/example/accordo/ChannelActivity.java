@@ -60,6 +60,8 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
 
         // Gestore evento di swipe to refresh per aggiornare i post
         postsSwipeRefreshLayout = findViewById(R.id.postsSwiperefresh);
+        postsSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(Utils.getThemeAttr(R.attr.colorPost, this));
+        postsSwipeRefreshLayout.setColorSchemeColors(Utils.getThemeAttr(R.attr.colorPrimary, this));
         postsSwipeRefreshLayout.setOnRefreshListener(
                 () -> getPosts()
         );
