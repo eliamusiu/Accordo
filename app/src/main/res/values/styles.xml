@@ -29,6 +29,7 @@
 
     <style name="Widget.Accordo.Toolbar" parent="Widget.MaterialComponents.Toolbar.PrimarySurface">
         <item name="titleTextColor">?attr/colorPrimaryDark</item>
+        <item name="elevation">4dp</item>
     </style>
 
     <!-- Buttons -->
@@ -93,7 +94,4 @@
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
-
-    <!-- navigation bar bottomsheet dialog -->
-
 </resources>

@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="4dp"
+        style="@style/Widget.Accordo.ActionBar"
         app:title="@string/send_image_activity_title"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -39,6 +40,7 @@
         android:insetTop="0dp"
         android:insetRight="0dp"
         android:insetBottom="0dp"
+        style="@style/Widget.Accordo.SendMaterialButton"
         app:layout_constraintTop_toBottomOf="@id/pickedImageImageView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
