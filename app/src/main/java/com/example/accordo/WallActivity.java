@@ -98,7 +98,6 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         cc.register(response -> {
             try {
                 setSharedPreference((String) response.get("sid"));
-                // TODO: fare toast per avvisare l'ottnimento del sid
                 Snackbar snackbar = Snackbar
                         .make(findViewById(R.id.bottomMenu),"Nuovo utente creato", Snackbar.LENGTH_LONG);
                 snackbar.setAnchorView(R.id.fab)

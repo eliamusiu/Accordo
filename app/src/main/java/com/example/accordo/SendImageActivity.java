@@ -8,8 +8,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 
@@ -20,6 +23,10 @@ import static com.example.accordo.Utils.getBase64FromBitmap;
 
 public class SendImageActivity extends AppCompatActivity {
     private static final String TAG = SendImageActivity.class.toString();
+
+    String ctitle;
+    String base64Image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,30 +34,36 @@ public class SendImageActivity extends AppCompatActivity {
 
         setToolbar();
 
-        String ctitle = getIntent().getStringExtra("ctitle");
+        ctitle = getIntent().getStringExtra("ctitle");
 
         Bitmap imageBitmap = Utils.getBitmapFromUri(getIntent().getParcelableExtra("imagePath"), getContentResolver());
+        base64Image = Utils.getBase64FromBitmap(imageBitmap);
         ((ImageView)findViewById(R.id.pickedImageImageView)).setImageBitmap(imageBitmap);
 
-        // Listener con callback per inviare l'immagine al server trasformandola in base64
-        findViewById(R.id.sendImageButton).setOnClickListener(v -> {
-            String base64Image = Utils.getBase64FromBitmap(imageBitmap);
-            CommunicationController cc = new CommunicationController(this);
-            try {
-                cc.addPost(ctitle, base64Image, Post.IMAGE,
-                        response -> super.onBackPressed(),
-                        error -> {
-                            Context context = getApplicationContext();
-                            CharSequence text = "Errore invio immagine"; //TODO: fare strings
-                            int duration = Toast.LENGTH_LONG;
-                            Toast toast = Toast.makeText(context, text, duration);toast.show();
-                            Log.e(TAG, "Errore invio immagine: " + error.networkResponse);
-                            super.onBackPressed();
-                        } );
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        });
+        if (base64Image.length() <= CommunicationController.MAX_IMAGE_LENGTH) {
+            // Listener con callback per inviare l'immagine al server trasformandola in base64
+            findViewById(R.id.sendImageButton).setOnClickListener(v -> {
+                sendImage();
+            });
+        } else {
+            findViewById(R.id.sendImageButton).setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(findViewById(R.id.pickedImageImageView), R.string.image_too_large_message, Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAnchorView(R.id.sendImageButton)
+                    .setAction("OK", v -> super.onBackPressed())
+                    .show();
+        }
+    }
+
+    private void sendImage() {
+        CommunicationController cc = new CommunicationController(this);
+        try {
+            cc.addPost(ctitle, base64Image, Post.IMAGE,
+                    response -> super.onBackPressed(),
+                    error -> Log.e(TAG, "Errore invio immagine: " + error.networkResponse));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setToolbar() {

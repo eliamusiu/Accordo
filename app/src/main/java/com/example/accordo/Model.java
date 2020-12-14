@@ -228,7 +228,9 @@ public class Model {
     //endregion
 
     //region Database immagini dei post
-    //TODO: scrivere documentazione
+     /**
+     * Prende le immagini dei post dal database e le setta ai post immagine del canale
+     */
     public void setImagesFromDB() {
         List<TextImagePost> images = db.imagePostDao().getAllImages();
         ArrayList<TextImagePost> imagePosts = getAllImagePosts();

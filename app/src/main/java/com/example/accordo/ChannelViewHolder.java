@@ -27,7 +27,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
      */
     public void updateContent(Channel channel) {
         channelTitle.setText(channel.getCtitle());
-        /* TODO: mette in grassetto anche canali non nostri
+        /*
         if (channel.getMine().equals("t")) {
             channelTitle.setTypeface(null, Typeface.BOLD);
         }*/

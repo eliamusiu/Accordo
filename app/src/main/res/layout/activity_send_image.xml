@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:elevation="4dp"
         style="@style/Widget.Accordo.ActionBar"
+        app:theme="@style/Widget.Accordo.ActionBar"
         app:title="@string/send_image_activity_title"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

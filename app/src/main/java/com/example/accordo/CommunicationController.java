@@ -15,6 +15,7 @@ public class CommunicationController {
     private static final String BASE_URL = "https://ewserver.di.unimi.it/mobicomp/accordo/";
     private final String sid;
     private RequestQueue requestQueue = null;
+    public static final int MAX_IMAGE_LENGTH = 137000;
 
     public CommunicationController(Context context) {
         requestQueue = Volley.newRequestQueue(context);

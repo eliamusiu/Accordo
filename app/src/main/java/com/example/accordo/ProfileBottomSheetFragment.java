@@ -95,6 +95,10 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         if (croppedProfilePicBitmap != null) {
             base64Image = Utils.getBase64FromBitmap(croppedProfilePicBitmap);
         }
+        sendEditProfileRequest(name, base64Image);
+    }
+
+    private void sendEditProfileRequest(String name, String base64Image) throws JSONException {
         cc = new CommunicationController(getContext());
         cc.setProfile(name, base64Image,
                 response -> {
@@ -116,6 +120,16 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
     public void setProfilePicture(Uri uri) {
         Bitmap bitmap = Utils.getBitmapFromUri(uri, context.getContentResolver());
         croppedProfilePicBitmap = Utils.cropImageToSquare(bitmap);
-        profilePictureImageView.setImageBitmap(croppedProfilePicBitmap);
+        String base64Image = Utils.getBase64FromBitmap(croppedProfilePicBitmap);
+
+        if (base64Image.length() > CommunicationController.MAX_IMAGE_LENGTH)  {
+            this.dismiss();
+            Snackbar snackbar = Snackbar
+                    .make(getActivity().findViewById(R.id.bottomMenu),R.string.image_too_large_message, Snackbar.LENGTH_LONG);
+            snackbar.setAnchorView(getActivity().findViewById(R.id.fab))
+                    .show();
+        } else {
+            profilePictureImageView.setImageBitmap(croppedProfilePicBitmap);
+        }
     }
 }
