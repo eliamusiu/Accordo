@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:text="@string/edit_profile_title"
         android:textSize="24dp"
+        android:gravity="center_horizontal"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/picNameLinearLayout"/>
@@ -39,17 +40,18 @@
                 android:layout_height="100dp"
                 android:layout_marginRight="24dp"
                 android:adjustViewBounds="true"
-                android:background="@drawable/their_post_background"
-                android:foreground="@drawable/image_post_foreground"
+                android:background="@drawable/circle_profile_background"
                 android:src="@drawable/ic_round_account_circle_24" />
 
             <Button
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:id="@+id/editProfileImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignRight="@id/userProfileImageView"
                 android:layout_alignBottom="@id/userProfileImageView"
                 style="@style/Widget.Accordo.MaterialButton"
-                android:drawableLeft="@drawable/ic_round_edit_24"
+                android:drawableRight="@drawable/ic_round_edit_24"
+                android:paddingRight="7dp"
                 android:insetLeft="0dp"
                 android:insetTop="0dp"
                 android:insetRight="0dp"
@@ -66,7 +68,7 @@
             android:hint="Nome utente">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/profileNameEditText"
-                android:layout_width="200dp"
+                android:layout_width="240dp"
                 android:layout_height="wrap_content"
                 android:hint="Nome utente" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -78,6 +80,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
+        android:drawableLeft="@drawable/ic_round_done_24"
         app:layout_constraintTop_toBottomOf="@+id/picNameLinearLayout"
         app:layout_constraintRight_toRightOf="parent"
         style="@style/Widget.Accordo.MaterialButton"

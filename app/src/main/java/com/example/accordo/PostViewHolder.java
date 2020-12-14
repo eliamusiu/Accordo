@@ -108,6 +108,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
      * @param postAuthor Autore del post dal prendere l'immagine per settare l'{@link ImageView}
      */
     public void setProfilePicture(User postAuthor) {
+        profileImageView.setClipToOutline(true);
         if (postAuthor == null || postAuthor.getPicture().equals("null")) {     // TODO: vedi italiantitan su canale 1
             profileImageView.setImageResource(R.drawable.ic_round_account_circle_24);
         } else {

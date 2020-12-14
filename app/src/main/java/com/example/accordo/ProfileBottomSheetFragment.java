@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -26,6 +27,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
     private CommunicationController cc;
     private ImageView profilePictureImageView;
     private EditText profileNameEditText;
+    private Button editProfileImageButton;
     private Context context;
     private Bitmap croppedProfilePicBitmap = null;
 
@@ -50,11 +52,12 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.fragment_profile_bottom_sheet, container, false);
         profilePictureImageView = view.findViewById(R.id.userProfileImageView);
         profileNameEditText = view.findViewById(R.id.profileNameEditText);
+        editProfileImageButton = view.findViewById(R.id.editProfileImageButton);
 
         setProfileInfo();
 
         // Click sull'immagine per cambiarla (apre il file explorer dalla WallActivity)
-        profilePictureImageView.setOnClickListener(v -> {
+        editProfileImageButton.setOnClickListener(v -> {
             ((WallActivity)context).onEditProfileImageClick();
         });
 
@@ -129,6 +132,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
             snackbar.setAnchorView(getActivity().findViewById(R.id.fab))
                     .show();
         } else {
+            profilePictureImageView.setClipToOutline(true);
             profilePictureImageView.setImageBitmap(croppedProfilePicBitmap);
         }
     }

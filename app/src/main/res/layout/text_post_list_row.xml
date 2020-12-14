@@ -24,6 +24,7 @@
 
             <ImageView
                 android:id="@+id/profileImageView"
+                android:background="@drawable/circle_profile_background"
                 android:src="@drawable/ic_round_account_circle_24"
                 android:layout_width="28dp"
                 android:layout_height="28dp"/>
