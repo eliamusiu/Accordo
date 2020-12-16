@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -11,6 +13,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,7 +54,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         // Gestore evento sulla barra di navigazione (modifica profilo)
         ((BottomNavigationView)findViewById(R.id.bottom_navigation)).setOnNavigationItemSelectedListener( item -> {
                 if (item.getItemId() == R.id.profile_page) {
-                    bottomSheetFragment = ProfileBottomSheetFragment.newInstance(this);
+                    bottomSheetFragment = ProfileBottomSheetFragment.newInstance();
                     bottomSheetFragment.show(getSupportFragmentManager(), ProfileBottomSheetFragment.TAG);
                 }
             return false;
@@ -173,6 +176,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         RecyclerView rv = findViewById(R.id.wallRecyclerView);
         rv.setLayoutManager(new LinearLayoutManager(this));
         ChannelAdapter adapter = new ChannelAdapter(this, this);
+        rv.addItemDecoration(new DividerItemDecoration(rv.getContext(), DividerItemDecoration.VERTICAL));
         rv.setAdapter(adapter);
     }
 

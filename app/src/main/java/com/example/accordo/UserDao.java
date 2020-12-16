@@ -18,7 +18,7 @@ public interface UserDao {
     @Query("SELECT * FROM ProfilePictures")
     List<User> getAllUsers();
 
-    @Query("UPDATE ProfilePictures SET pversion = :pversion, picture=:picture WHERE uid = :uid")
+    @Query("UPDATE ProfilePictures SET pversion = :pversion, picture = :picture WHERE uid = :uid")
     void updateUser(String uid, String pversion, String picture);
 
     @Insert

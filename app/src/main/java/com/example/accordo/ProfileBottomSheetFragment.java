@@ -1,6 +1,9 @@
 package com.example.accordo;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -10,12 +13,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -28,16 +37,15 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
     private ImageView profilePictureImageView;
     private EditText profileNameEditText;
     private Button editProfileImageButton;
-    private Context context;
+    //private Context context;
     private Bitmap croppedProfilePicBitmap = null;
 
-    public ProfileBottomSheetFragment(Context context) {
-        this.context = context;
+    public ProfileBottomSheetFragment() {
         // Required empty public constructor
     }
 
-    public static ProfileBottomSheetFragment newInstance(Context context) {
-        return new ProfileBottomSheetFragment(context);
+    public static ProfileBottomSheetFragment newInstance() {
+        return new ProfileBottomSheetFragment();
     }
 
     @Override
@@ -58,7 +66,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
 
         // Click sull'immagine per cambiarla (apre il file explorer dalla WallActivity)
         editProfileImageButton.setOnClickListener(v -> {
-            ((WallActivity)context).onEditProfileImageClick();
+            ((WallActivity) getContext()).onEditProfileImageClick();
         });
 
         // Click sul bottone "modifica" per inviare al server le modifiche effettuate
@@ -73,16 +81,37 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     /**
+     * Espande il bottomSheetDialogFragment anche quando si ha il device in landscape
+     * @param savedInstanceState
+     * @return
+     */
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            dialog.setOnShowListener(dialog1 -> {
+                BottomSheetDialog d = (BottomSheetDialog) dialog1;
+                FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+                BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+
+            });
+        }
+        return dialog;
+    }
+    /**
      * Inserisce il nome dell'utente nella EditText e l'immagine del profilo nella ImageView
      */
     private void setProfileInfo() {
-        User actualUser = Model.getInstance(context).getActualUser();
+        User actualUser = Model.getInstance(getContext()).getActualUser();
         Object name = actualUser.getName();
         Object picture = actualUser.getPicture();
         if (name != null) {
             profileNameEditText.setText(name.toString());
         }
         if (picture != null) {
+            profilePictureImageView.setClipToOutline(true);
             profilePictureImageView.setImageBitmap(Utils.getBitmapFromBase64(picture.toString(), getContext()));
         }
     }
@@ -121,7 +150,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
      * @param uri Uri dell'immagine di profilo
      */
     public void setProfilePicture(Uri uri) {
-        Bitmap bitmap = Utils.getBitmapFromUri(uri, context.getContentResolver());
+        Bitmap bitmap = Utils.getBitmapFromUri(uri, getContext().getContentResolver());
         croppedProfilePicBitmap = Utils.cropImageToSquare(bitmap);
         String base64Image = Utils.getBase64FromBitmap(croppedProfilePicBitmap);
 
