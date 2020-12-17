@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/channelRowLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:background="?android:attr/selectableItemBackground"
-    android:orientation="horizontal"
+    android:paddingLeft="12dp"
+    android:paddingTop="18dp"
+    android:paddingBottom="12dp"
     android:gravity="center_vertical">
 
     <TextView
-        android:id="@+id/channelFirstLetterTextView"
+        android:id="@+id/channelIndex"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:background="@drawable/circle_profile_background"
-        android:backgroundTint="?attr/colorPost"
+        android:backgroundTint="?attr/colorPrimary"
         android:textSize="28dp"
         android:gravity="center"
-        android:textColor="?attr/colorOnSurface"
-        android:text="C"/>
+        android:textColor="?attr/colorOnPrimary"
+        android:drawableTint="?attr/colorOnPrimary"/>
 
     <TextView
-        android:id="@+id/channelTitleTextView"
+        android:id="@+id/myChannelsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="18dp"
-        android:text="Prova Prova"
-        android:textSize="28dp"/>
+        android:visibility="gone"
+        android:textSize="20dp"
+        android:text="@string/my_channels"
+        android:textColor="?attr/colorPrimary"/>
 
 </LinearLayout>

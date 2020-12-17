@@ -12,7 +12,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Model {
     private static Model instance = null;
@@ -61,6 +65,49 @@ public class Model {
             Channel channel = gson.fromJson(channelJson.toString(), Channel.class);
             channels.add(channel);
         }
+        getData();
+    }
+
+    /**
+     * Aggiunge gli indici (lettera dell'alfabeto per raggruppare i canali con la stessa iniziale).
+     * Oltre alle lettere sono un indice i canali "miei" (dell'utente loggato) e i caratteri
+     * speciali, inclusi i numeri ("#")
+     */
+    private void getData() {
+        ArrayList<Channel> newList = new ArrayList<>();
+        String chFirstLetter = null, nextChFirstLetter = null;
+
+        for (int i = 0; i < channels.size(); i++) {
+            if (i == 0) { // Se il primo canale e mio, setto l'indice che poi avrà l'icona della stella
+                if (channels.get(i).getMine().equals("t")) {
+                    Channel ch = new Channel();
+                    ch.setIndex(Channel.MY_CHANNEL_INDEX);
+                    newList.add(ch);
+                    chFirstLetter = "P";
+                    nextChFirstLetter = Channel.NO_LETTER_INDEX;
+                } else {    // Altrimenti, mette '#'
+                    Channel ch = new Channel();
+                    ch.setIndex(Channel.NO_LETTER_INDEX);
+                    newList.add(ch);
+                }
+            } // Se il canale non ha il nome vuoto (altrimenti crasha) e non è "mio"
+            if (!channels.get(i).getCtitle().equals("") && channels.get(i).getMine().equals("f")) {
+                chFirstLetter = Character.toString(channels.get(i).getCtitle().charAt(0)).toUpperCase();
+                try {
+                    nextChFirstLetter = Character.toString(channels.get(i + 1).getCtitle().charAt(0)).toUpperCase();
+                } catch (IndexOutOfBoundsException e) {
+                    nextChFirstLetter = Channel.NO_LETTER_INDEX;
+                }
+            }
+            newList.add(channels.get(i));       // Aggiunge il canale alla lista
+            if (chFirstLetter != null && !chFirstLetter.equalsIgnoreCase(nextChFirstLetter) && !Character.isDigit(nextChFirstLetter.charAt(0))
+                && !channels.get(i).getCtitle().equals("")) {
+                    Channel ch = new Channel();
+                    ch.setIndex(nextChFirstLetter);
+                    newList.add(ch);            // Aggiunge la lettera alla lista
+            }
+        }
+        channels = newList;
     }
 
     /**

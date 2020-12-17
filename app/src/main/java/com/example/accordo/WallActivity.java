@@ -4,8 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -13,7 +11,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -174,9 +171,11 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
      */
     private void setRecyclerView() {
         RecyclerView rv = findViewById(R.id.wallRecyclerView);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rv.setLayoutManager(layoutManager);
         ChannelAdapter adapter = new ChannelAdapter(this, this);
-        rv.addItemDecoration(new DividerItemDecoration(rv.getContext(), DividerItemDecoration.VERTICAL));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv.getContext());
+        rv.addItemDecoration(dividerItemDecoration);
         rv.setAdapter(adapter);
     }
 
@@ -259,3 +258,4 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         }
     }
 }
+

@@ -9,7 +9,7 @@
         <item name="colorSecondaryVariant">@color/greenLime</item>
         <item name="colorOnSecondary">@color/black</item>
 
-        <item name="colorSurface">@color/white</item>
+        <item name="colorSurface">@color/light_grey</item>
         <item name="colorPrimarySurface">?attr/colorPrimary</item>
         <item name="colorOnPrimarySurface">@color/white</item>
         <item name="colorPrimaryDark">@color/white</item>

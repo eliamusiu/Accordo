@@ -15,6 +15,8 @@
         <item name="colorOnPrimarySurface">@color/lilac</item>
         <item name="colorPrimaryDark">@color/lilac</item>
 
+        <item name="android:windowBackground">@color/black</item>
+
         <item name="colorPost">@color/dark_grey2</item>
 
         <!-- Status bar and navigation color. -->
