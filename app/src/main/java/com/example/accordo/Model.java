@@ -100,8 +100,9 @@ public class Model {
                 }
             }
             newList.add(channels.get(i));       // Aggiunge il canale alla lista
-            if (chFirstLetter != null && !chFirstLetter.equalsIgnoreCase(nextChFirstLetter) && !Character.isDigit(nextChFirstLetter.charAt(0))
-                && !channels.get(i).getCtitle().equals("")) {
+            if (chFirstLetter != null && !chFirstLetter.equalsIgnoreCase(nextChFirstLetter)
+                    && !Character.isDigit(nextChFirstLetter.charAt(0)) && !channels.get(i).getCtitle().equals("")
+                    && i != channels.size() - 1) {
                     Channel ch = new Channel();
                     ch.setIndex(nextChFirstLetter);
                     newList.add(ch);            // Aggiunge la lettera alla lista

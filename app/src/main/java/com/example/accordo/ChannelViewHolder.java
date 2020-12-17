@@ -50,6 +50,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
         if (index.equals(Channel.MY_CHANNEL_INDEX)) {
             channelIndex.setCompoundDrawablesWithIntrinsicBounds(context.getDrawable(R.drawable.ic_round_star_24), null, null, null);
             channelIndex.setPadding(Utils.getPixelsFromDp(16f, context), 0, 0, 0);
+            channelIndex.setText("");
             myChannelsTextView.setVisibility(View.VISIBLE);
         } else {
             myChannelsTextView.setVisibility(View.GONE);
