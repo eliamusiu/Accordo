@@ -32,6 +32,8 @@
         <item name="bottomSheetDialogTheme">@style/CustomBottomSheetDialog</item>
         <!-- Stile snackbar -->
         <item name="snackbarStyle">@style/Widget.Accordo.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.Accordo.Snackbar.TextView</item>
+        <item name="snackbarButtonStyle">@style/Widget.Accordo.MaterialButton</item>
     </style>
 
     <style name="ThemeOverlay.Accordo.FullscreenContainer" parent="">

@@ -54,6 +54,8 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
             myChannelsTextView.setVisibility(View.VISIBLE);
         } else {
             myChannelsTextView.setVisibility(View.GONE);
+            channelIndex.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+            channelIndex.setPadding(0, 0, 0, 0);
             channelIndex.setText(index);
         }
     }

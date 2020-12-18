@@ -64,9 +64,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         User postAuthor = Model.getInstance(context).getUser(post.getUid());
         PostViewHolder viewHolder = (PostViewHolder)holder;
 
-        viewHolder.setUserName(post.getName()); // setta il nome utente a ogni tipo di post (i, l, t)
-        updateViewHolder(viewHolder, post); // aggiorna il contenuto in base al tipo di post
-        viewHolder.setProfilePicture(postAuthor);// viene settata l'immagine di profilo per ogni post
+        viewHolder.setUserName(post.getName());     // Setta il nome utente a ogni tipo di post (i, l, t)
+        updateViewHolder(viewHolder, post);         // Aggiorna il contenuto in base al tipo di post
+        viewHolder.setProfilePicture(postAuthor);   // Setta l'immagine di profilo per ogni post
         if (Model.getInstance(context).getActualUser().getUid().equals(post.getUid())) {
             viewHolder.setActualUserStyleForPost();
         } else {

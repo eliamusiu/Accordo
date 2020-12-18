@@ -126,9 +126,8 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         pc.setProfilePictures(() -> adapter.notifyData());
         pc.setPostImages(() -> {
             adapter.notifyData();
-            // aggiunge a images le immagini ricevute per poi mostrarle nel carousel
+            // Aggiunge a images le immagini ricevute per poi mostrarle nel carousel
             images = new ArrayList<>();
-            images.clear();
             for (TextImagePost imagePost : Model.getInstance(this).getAllImagePosts()) {
                 if (imagePost.getContent() != null) {
                     images.add(Utils.getBitmapFromBase64(imagePost.getContent(), this));
@@ -138,40 +137,6 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         });
     }
 
-
-    /**
-     * Fa la richiesta di rete del {@link CommunicationController} per ottenere le immagini e nella
-     * callback le aggiunge sia al {@link Model} sia a {@link #images}. Alla fine chiama
-     * {@link PostAdapter#notifyData()}
-     * @throws JSONException
-     */
-    /*
-    private void getImages() throws JSONException {
-        images.clear();
-        cc = new CommunicationController(this);
-        ArrayList<TextImagePost> imagePosts = Model.getInstance(this).getAllImagePosts();
-
-        for (TextImagePost post : imagePosts) {
-            cc.getPostImage(post.getPid(),
-                    reponse -> {
-                        try {
-                            String content = reponse.getString("content");
-                            post.setContent(content);
-                            images.add(Utils.getBitmapFromBase64(content));
-                            if (imagePosts.indexOf(post) == (imagePosts.size() - 1)) { // se è l'ultimo post con immagine viene settata la recycler view
-                                adapter.notifyData();
-                                Collections.reverse(images);
-                                rv.scrollToPosition(0);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    },
-                    error -> Log.d(TAG, "request error: " + error.toString())
-            );
-        }
-    }
-    */
     /**
      * Fa la richiesta di rete del {@link CommunicationController} per aggiungere un post di tipo
      * testo, prendendolo dalla EditText
@@ -218,7 +183,6 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
     @Override
     public void onRecyclerViewImageClick(View v, int position) {
         ImageView contentImageView = (ImageView)v;
-        //String imageContent = ((TextImagePost)Model.getInstance(this).getPost(position)).getContent();
         int imagePosition = Utils.getImagePositionInPosts(position, Model.getInstance(this).getAllPosts());
         new StfalconImageViewer.Builder<>(this, images, (imageView, image) -> Glide.with(this)
                 .load(image)

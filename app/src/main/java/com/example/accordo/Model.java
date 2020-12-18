@@ -21,11 +21,12 @@ import java.util.Set;
 public class Model {
     private static Model instance = null;
     private static AppDatabase db = null;
-    private ArrayList<Channel> channels = null;
-    private ArrayList<Post> posts = null;
-    private List<User> users = null;
+    private ArrayList<Channel> channels;
+    private ArrayList<Post> posts;
+    private List<User> users;
     private String sid = null;
     private User actualUser = null;
+    private Context context;
 
     /**
      * Costruttore che istanzia le liste e costruisce il database
@@ -35,6 +36,7 @@ public class Model {
         channels = new ArrayList<>();
         posts = new ArrayList<>();
         users = new ArrayList<>();
+        this.context = context;
         db = Room.databaseBuilder(context,
                 AppDatabase.class, "Users").build();
     }
@@ -123,26 +125,14 @@ public class Model {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject postJson = jsonArray.getJSONObject(i);
             String type = (String) postJson.get("type");
-            if (type.equals("t") || type.equals("i")) {
+            if (type.equals(Post.TEXT) || type.equals(Post.IMAGE)) {
                 TextImagePost post = gson.fromJson(postJson.toString(), TextImagePost.class);
                 posts.add(post);
-            } else if (type.equals("l")) {
+            } else if (type.equals(Post.LOCATION)) {
                 LocationPost locationPost = gson.fromJson(postJson.toString(), LocationPost.class);
                 posts.add(locationPost);
             }
         }
-    }
-
-    // TODO: Togliere se non lo useremo mai
-    public void addPost(String uid, String name, String pversion, String pid, String type, String content) {
-        TextImagePost post = new TextImagePost();
-        post.setUid(uid);
-        post.setName(name);
-        post.setPversion(pversion);
-        post.setType(type);
-        post.setPid(pid);
-        post.setContent(content);
-        posts.add(post);
     }
 
     public void setSid(String sid) {
@@ -153,17 +143,12 @@ public class Model {
         return sid;
     }
 
-    // TODO: togliere?
-    public ArrayList<Channel> getAllChannels() {
-        return channels;
-    }
-
     /**
      * Ritorna tutti i post del canale attuale
      * @return Tutti i post del canale attuale
      */
     public ArrayList<Post> getAllPosts() {
-        return posts;
+        return new ArrayList<>(posts);
     }
 
     /**
@@ -173,7 +158,7 @@ public class Model {
     public ArrayList<TextImagePost> getAllImagePosts() {
         ArrayList<TextImagePost> textImagePosts = new ArrayList<>();
         for (Post post : posts) {
-            if (post.getType().equals("i")) {
+            if (post.getType().equals(Post.IMAGE)) {
                 textImagePosts.add((TextImagePost) post);
             }
         }
@@ -186,7 +171,7 @@ public class Model {
      * @return Utente con l'uid passato
      */
     public User getUser(String uid) {
-        return users.stream()
+        return new ArrayList<>(users).stream()
                 .filter(user -> uid.equals(user.getUid()))
                 .findAny()
                 .orElse(null);
@@ -198,7 +183,7 @@ public class Model {
      * @return
      */
     public Channel getChannel(int index) {
-        return channels.get(index);
+        return new ArrayList<>(channels).get(index);
     }
 
     /**
@@ -207,7 +192,7 @@ public class Model {
      * @return
      */
     public Post getPost(int index) {
-        return posts.get(index);
+        return getAllPosts().get(index);
     }
 
     /**
@@ -216,7 +201,7 @@ public class Model {
      * @return il post con il PID specificato
      */
     public Post getPost(String pid) {
-        return posts.stream()
+        return new ArrayList<>(posts).stream()
                 .filter(post -> pid.equals(post.getPid()))
                 .findAny()
                 .orElse(null);
@@ -245,6 +230,17 @@ public class Model {
      */
     public void setUsersFromDB() {
         users = db.userDao().getAllUsers();
+        convertProfilePicToBitmap();
+    }
+
+    /**
+     * Converte le immagini profilo in {@link android.graphics.Bitmap} usando {@link Utils#getBitmapFromBase64(String, Context)}
+     * in modo da non farlo fare ogni volta in {@link PostViewHolder}, altrimenti la RecyclerView laggerebbe
+     */
+    private void convertProfilePicToBitmap() {
+        for (User user : users) {
+            user.setBitmapPicture(Utils.getBitmapFromBase64(user.getPicture(), context));
+        }
     }
 
     /**
@@ -257,6 +253,7 @@ public class Model {
         (new Thread(() -> db.userDao().updateUser(uid, pversion, picture))).start();
         getUser(uid).setPversion(pversion);
         getUser(uid).setPicture(picture);
+        getUser(uid).setBitmapPicture(Utils.getBitmapFromBase64(picture, context));
     }
 
     /**
@@ -270,6 +267,7 @@ public class Model {
         user.setUid(uid);
         user.setPversion(pversion);
         user.setPicture(picture);
+        user.setBitmapPicture(Utils.getBitmapFromBase64(picture, context));
         (new Thread(() -> db.userDao().insertUser(user))).start();
         users.add(user);
     }

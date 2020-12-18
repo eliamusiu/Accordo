@@ -80,15 +80,14 @@ public class Utils {
      * @return posizione dell'immagine (tra i post di tipo immagine)
      */
     public static int getImagePositionInPosts(int postPosition, ArrayList<Post> posts) {
-        ArrayList<Post> cPosts = new ArrayList<>(posts);
-        Collections.reverse(cPosts); // TODO: togliere questa copia quando metteremo che il model ritorna direttamente una copia
+        Collections.reverse(posts); // TODO: togliere questa copia quando metteremo che il model ritorna direttamente una copia
         int imagePosition = 0;
-        postPosition = (cPosts.size() - postPosition) - 1;
-        for (Post post : cPosts) {
+        postPosition = (posts.size() - postPosition) - 1;
+        for (Post post : posts) {
             if (post.getType().equals("i")) {
                 imagePosition++;
             }
-            if (postPosition == cPosts.indexOf(post)) {
+            if (postPosition == posts.indexOf(post)) {
                 return imagePosition - 1;
             }
         }

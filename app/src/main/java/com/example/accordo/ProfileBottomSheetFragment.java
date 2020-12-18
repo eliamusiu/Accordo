@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +38,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
     private CommunicationController cc;
     private ImageView profilePictureImageView;
     private EditText profileNameEditText;
-    private Button editProfileImageButton;
+    private Button editProfileImageButton, editProfileButton;
     //private Context context;
     private Bitmap croppedProfilePicBitmap = null;
 
@@ -61,6 +63,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         profilePictureImageView = view.findViewById(R.id.userProfileImageView);
         profileNameEditText = view.findViewById(R.id.profileNameEditText);
         editProfileImageButton = view.findViewById(R.id.editProfileImageButton);
+        editProfileButton = view.findViewById(R.id.editProfileButton);
 
         setProfileInfo();
 
@@ -75,6 +78,20 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
                 editProfile();
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+        });
+
+        //
+        profileNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {  }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                editProfileButton.setEnabled(true);
             }
         });
         return view;
@@ -117,7 +134,8 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     /**
-     * Fa la richiesta di rete per aggiornare nome dell'utente e/o immagine profilo
+     * Prende il testo dalla EditText e, se presente, trasforma l'immagine in bitmap.
+     * Passa a {@link #sendEditProfileRequest(String, String)} queste informazioni appena prese
      * @throws JSONException
      */
     private void editProfile() throws JSONException {
@@ -130,6 +148,10 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         sendEditProfileRequest(name, base64Image);
     }
 
+    /**
+     * Fa la richiesta di rete per aggiornare nome dell'utente e/o immagine profilo
+     * @throws JSONException
+     */
     private void sendEditProfileRequest(String name, String base64Image) throws JSONException {
         cc = new CommunicationController(getContext());
         cc.setProfile(name, base64Image,
@@ -137,11 +159,20 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
                     Log.d(TAG, "Richiesta di rete OK");
                     this.dismiss();
                     Snackbar snackbar = Snackbar
-                            .make(getActivity().findViewById(R.id.bottomMenu),"Informazioni aggiornate", Snackbar.LENGTH_LONG);
+                            .make(getActivity().findViewById(R.id.bottomMenu), getResources().getString(R.string.updated_profile_info), Snackbar.LENGTH_LONG);
                     snackbar.setAnchorView(getActivity().findViewById(R.id.fab))
                             .show();
                 },
-                error -> Log.e(TAG, "Errore richiesta: " + error));     // TODO: Gestire errore 400 (nome già usato)
+                error -> {
+                    if (error.networkResponse.statusCode == 400) {
+                        this.dismiss();
+                        Snackbar snackbar = Snackbar
+                                .make(getActivity().findViewById(R.id.bottomMenu),getResources().getString(R.string.already_used_username), Snackbar.LENGTH_LONG);
+                        snackbar.setAnchorView(getActivity().findViewById(R.id.fab))
+                                .show();
+                    }
+                    Log.e(TAG, "Errore richiesta: " + error);
+                });
     }
 
     /**
@@ -161,6 +192,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
             snackbar.setAnchorView(getActivity().findViewById(R.id.fab))
                     .show();
         } else {
+            editProfileButton.setEnabled(true);
             profilePictureImageView.setClipToOutline(true);
             profilePictureImageView.setImageBitmap(croppedProfilePicBitmap);
         }

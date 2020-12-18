@@ -22,12 +22,9 @@
         <!-- Status bar and navigation color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/black</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
-
         <!-- Toolbar -->
         <item name="toolbarStyle">@style/Widget.Accordo.Toolbar</item>
         <item name="navigationViewStyle">@style/Widget.MaterialComponents.BottomNavigationView.PrimarySurface</item>
-
-
         <!-- Stile bottoni -->
         <item name="materialButtonStyle">@style/Widget.Accordo.MaterialButton</item>
         <!-- Popup Attach -->
@@ -38,6 +35,8 @@
         <item name="bottomSheetDialogTheme">@style/CustomBottomSheetDialog</item>
         <!-- Stile snackbar -->
         <item name="snackbarStyle">@style/Widget.Accordo.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.Accordo.Snackbar.TextView</item>
+        <item name="snackbarButtonStyle">@style/Widget.Accordo.MaterialButton</item>
     </style>
 
     <style name="ThemeOverlay.Accordo.FullscreenContainer" parent="">

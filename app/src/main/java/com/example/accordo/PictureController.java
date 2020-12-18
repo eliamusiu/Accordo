@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +23,8 @@ public class PictureController {
     private static final String TAG = PictureController.class.toString();
     private Context context;
     private Model model;
+    private Runnable updateRecyclerViewRunnable;
+    private Runnable updateImagesRunnable;
 
     public PictureController(Context context) {
         this.context = context;
@@ -36,10 +37,13 @@ public class PictureController {
      * @param runnable Callback che verrà chiamata ad ogni immagine ricevuta
      */
     public void setProfilePictures(Runnable runnable) {
+        final Handler handler = new Handler(Looper.getMainLooper());
         (new Thread(() -> {
             model.setUsersFromDB();                 // Setta nella lista users del Model gli utenti presenti nel DB
+            updateRecyclerViewRunnable = runnable;
+            handler.post(updateRecyclerViewRunnable);       // Setta la recyclerView con le immagini del DB
             try {
-                getMissingProfilePictures(runnable);
+                checkMissingProfilePictures();      // Prende le immagini mancanti o non aggiornate
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -49,30 +53,36 @@ public class PictureController {
 
     /**
      * Per ogni utente distinto che ha pubblicato post nel canale controlla se è presente in
-     * {@link Model} o se la {@link User#getPversion()} è aggiornata. In caso contrario chiama
-     * {@link #getUserPicture(String, Runnable)}
-     * @param runnable Callback che verrà chiamata quando l'immagine è stata ricevuta e salvata in
-     *                 {@link Model}
+     * {@link Model} o se la {@link User#getPversion()} è aggiornata e aggiunge questi utenti ad
+     * una lista e richiama infine {@link #getUserPicture(ArrayList)}
      * @throws JSONException
      */
-    private void getMissingProfilePictures(Runnable runnable) throws JSONException {
+    private void checkMissingProfilePictures() throws JSONException {
         List<Post> usersInChannel = model.getAllPosts().stream().filter(distinctByKey(Post::getUid)).collect(Collectors.toList());
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(runnable);
+        ArrayList<String> profilePicToRequest = new ArrayList<>();
 
         for (Post post : usersInChannel) {       // Scorre i post distinti per uid
             String uid = post.getUid();
-
             // Se l'utente di questo post non è nel model/DB o se non ha l'immagine di profilo aggiornata
             if (model.getUser(uid) == null || !model.getUser(uid).getPversion().equals(post.getPversion())) {
-                getUserPicture(uid,
-                        () -> {     // Callback se l'immagine è stata presa dalla rete per aggiornarla/aggiungerla
-                            handler.post(runnable);
-                            Log.d(TAG, "Ho ricevuto la picture dalla rete");
-                        });
+                profilePicToRequest.add(uid);
             }
         }
+        getUserPicture(profilePicToRequest);
     }
+
+    /**
+     * Viene chiamato una volta ricevuta l'ultima immagine di profilo dalla rete, tra quelle
+     * mancanti. A sua volta chiama il runnable che aggiorna la recyclerView in {@link ChannelActivity}
+     */
+    Runnable pictureReceivedCallback = new Runnable() {
+        @Override
+        public void run() {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(updateRecyclerViewRunnable);
+            Log.d(TAG, "Ho ricevuto la picture dalla rete");
+        }
+    };
 
     /**
      * Toglie le ripetizioni in una lista in base a un attributo
@@ -86,29 +96,31 @@ public class PictureController {
     }
 
     /**
-     * Definisce i metodi di callback da passare a {@link #getUserInfo(String, Response.Listener)}
-     * in base a se si tratta di aggiornare l'immagine di un utente già presente in {@link Model}
-     * oppure aggiungerne uno nuovo
-     * @param uid
-     * @param updateUserCallback Callback che viene chiamata una volta che la richiesta di rete è
-     *                           stata ricevuta e {@link Model} è stato settato con i valori appena
-     *                           ricevuti
+     * Scorre tutte gli uid dei profili di cui richiedere l'immagine e per ognuno effettua la
+     * chiamata di rete per ottenere l'immagine e come callback aggiorna o aggiunge l'immagine.
+     * Per l'ultimo uid, richiama {@link #pictureReceivedCallback}
+     * @param profilePicToRequest Lista di uid degli utenti con immagine assente o non aggiornata
      * @throws JSONException
      */
-    private void getUserPicture(String uid, Runnable updateUserCallback) throws JSONException {
+    private void getUserPicture(ArrayList<String> profilePicToRequest) throws JSONException {
+        CommunicationController cc = new CommunicationController(context);
         final Handler handler = new Handler(Looper.getMainLooper());
-        User postAuthor = model.getUser(uid);
 
-        if (postAuthor != null) {                       // Se l'utente è già presente nel DB => aggiorna immagine
-            getUserInfo(uid, response -> {                  // Chiamata di rete
-                updateUser(response);                           // Setta i dati appena ottenuti nel model che fa l'update nel database
-                handler.post(updateUserCallback);               // Chiama la callback per informare che i dati sono stati aggiornati
-            });
-        } else {                                        // Se l'utente non è già presente nel DB/model => aggiungi immagine
-            getUserInfo(uid, response -> {                  // Chiamata di rete
-                addUser(response);                              // Setta i dati appena ottenuti nel model che fa la insert
-                handler.post(updateUserCallback);               // Chiama la callback per informare che i dati sono stati aggiunti
-            });
+        for (String uid : profilePicToRequest) {
+            User postAuthor = model.getUser(uid);
+            cc.getUserPicture(uid, response -> {                  // Chiamata di rete
+                        if (postAuthor != null) {                       // Se l'utente è già presente nel DB => aggiorna immagine
+                            updateUser(response);                           // Setta i dati appena ottenuti nel model che fa l'update nel database
+                            handler.post(pictureReceivedCallback);          // Chiama la callback per informare che i dati sono stati aggiornati
+                        } else {                                        // Se l'utente non è già presente nel DB/model => aggiungi immagine
+                            addUser(response);                              // Setta i dati appena ottenuti nel model che fa la insert
+                            handler.post(pictureReceivedCallback);          // Chiama la callback per informare che i dati sono stati aggiunti
+                        }
+                        if (profilePicToRequest.indexOf(uid) == profilePicToRequest.size() - 1) {   // Se è l'ultima immagine ricevuta
+                            handler.post(pictureReceivedCallback);
+                        }
+                    },
+                    error -> Log.e(TAG,"Errore scaricamento immagine dalla rete: " + error.networkResponse));
         }
     }
 
@@ -139,20 +151,6 @@ public class PictureController {
             e.printStackTrace();
         }
     }
-
-    /**
-     * Chiama {@link CommunicationController#getUserPicture(String, Response.Listener, Response.ErrorListener)}
-     * passandogli la callback definita in {@link #getUserPicture(String, Runnable)}
-     * @param uid Uid del post
-     * @param responseCallback Callback chiamata quando la richiesta di rete è andata a buon fine
-     * @throws JSONException
-     */
-    private void getUserInfo(String uid, Response.Listener<JSONObject> responseCallback) throws JSONException {
-        CommunicationController cc = new CommunicationController(context);
-        cc.getUserPicture(uid, responseCallback,
-                error -> Log.e(TAG,"Errore scaricamento immagine dalla rete: " + error.networkResponse)
-        );
-    }
     //endregion
 
     //region Gestione immagini dei post
@@ -163,36 +161,62 @@ public class PictureController {
     public void setPostImages(Runnable runnable) {
         (new Thread(() -> {
             model.setImagesFromDB();  // Setta nella lista posts del Model le immagini presenti nel DB
+            updateImagesRunnable = runnable;
             try {
-                getImages(runnable);
+                checkMissingImages();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         })).start();
     }
 
-    private void getImages(Runnable runnable) throws JSONException {
-        CommunicationController cc = new CommunicationController(context);
+    /**
+     * Aggiunge ad una lista tutte le immagini che non sono già presenti nel DB/model e richiama
+     * {@link #getImages(ArrayList)} passandogli la lista
+     * @throws JSONException
+     */
+    private void checkMissingImages() throws JSONException {
         ArrayList<TextImagePost> imagePosts = model.getAllImagePosts();
+        ArrayList<String> imagesToRequest = new ArrayList<>();
         final Handler handler = new Handler(Looper.getMainLooper());
 
-        handler.post(runnable); //le immagini che sono già nel database vengono caricate immediatamente
+        handler.post(updateImagesRunnable); // Le immagini che sono già nel database vengono caricate immediatamente
 
         for (TextImagePost post : imagePosts) {
             if (post.getContent() == null) {
-                cc.getPostImage(post.getPid(),
-                        response -> {
-                            try {
-                                Log.d(TAG, "scarico immagini dalla rete");
-                                model.addImage(post.getPid(), response.getString("content"));
-                                handler.post(runnable);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        },
-                        error -> Log.d(TAG, "request error: " + error.toString())
-                );
+                imagesToRequest.add(post.getPid());
             }
+        }
+        getImages(imagesToRequest);
+    }
+
+    /**
+     * Per ogni immagine da richiedere fa la richiesta di rete nella cui response aggiunge a
+     * {@link Model#addImage(String, String)} l'immagine e, nel caso dell'ultima da richiedere,
+     * chiama {@link #updateImagesRunnable}
+     * @param imagesToRequest
+     * @throws JSONException
+     */
+    private void getImages(ArrayList<String> imagesToRequest) throws JSONException {
+        CommunicationController cc = new CommunicationController(context);
+        final Handler handler = new Handler(Looper.getMainLooper());
+
+        for (String pid : imagesToRequest) {
+            cc.getPostImage(pid,
+                    response -> {
+                        try {
+                            Log.d(TAG, "scarico immagini dalla rete");
+                            model.addImage(pid, response.getString("content"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (imagesToRequest.indexOf(pid) == imagesToRequest.size() - 1) {
+                            handler.post(updateImagesRunnable);
+                        }
+                    },
+                    error -> Log.d(TAG, "request error: " + error.toString())
+            );
+
         }
     }
     //endregion

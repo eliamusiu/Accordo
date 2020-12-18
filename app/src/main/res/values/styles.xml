@@ -53,8 +53,13 @@
         <item name="android:stateListAnimator">@null</item>
     </style>
 
+    <!-- Snackbar -->
     <style name="Widget.Accordo.Snackbar" parent="Widget.MaterialComponents.Snackbar">
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Accordo.MaterialButton</item>
+        <item name="backgroundTint">?attr/colorPost</item>
+    </style>
+
+    <style name="Widget.Accordo.Snackbar.TextView" parent="Widget.MaterialComponents.Snackbar.TextView">
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <!-- Post -->

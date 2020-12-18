@@ -9,7 +9,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="preference_file_sid">sid</string>
     <string name="preference_file_sid_default_value">no</string>
-    <string name="edit_profile">Conferma modifiche</string>
+    <string name="edit_profile">Salva</string>
     <string name="new_post_hint">Scrivi un nuovo post...</string>
     <string name="preference_file_uid">uid</string>
     <string name="preference_file_uid_default_value">no</string>
@@ -23,7 +23,7 @@
     <string name="send_image_activity_title">Allega immagine</string>
     <string name="send_location_activity_title" >La tua posizione</string>
     <string name="post_location_activity_title">Posizione di </string>
-    <string name="edit_profile_title">Modifica il tuo profilo</string>
+    <string name="edit_profile_title">Modifica profilo</string>
     <string name="send">Invia</string>
     <string name="gps_network_not_enabled">Vuoi attivare i servizi di geolocalizzazione?</string>
     <string name="open_location_settings">Vai a impostazioni</string>
@@ -31,4 +31,6 @@
     <string name="disabled_location_services">Geolocalizzazione disattivata</string>
     <string name="image_too_large_message">L\'immagine selezionata è troppo grande</string>
     <string name="my_channels">I miei canali</string>
+    <string name="updated_profile_info">Informazioni aggiornate</string>
+    <string name="already_used_username">Nome utente già usato</string>
 </resources>
