@@ -21,7 +21,6 @@
         <item name="android:navigationBarColor">?attr/colorSurface</item>
         <item name="toolbarStyle">@style/Widget.Accordo.Toolbar</item>
         <item name="android:windowLightNavigationBar">true</item>
-
         <!-- Stile bottoni -->
         <item name="materialButtonStyle">@style/Widget.Accordo.MaterialButton</item>
         <!-- Popup Attach -->

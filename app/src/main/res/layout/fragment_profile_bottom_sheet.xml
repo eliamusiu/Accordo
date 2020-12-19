@@ -31,11 +31,11 @@
             android:id="@+id/editProfileButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:padding="0dp"
+            android:enabled="false"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            style="@style/Widget.Accordo.MaterialButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:text="@string/edit_profile"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

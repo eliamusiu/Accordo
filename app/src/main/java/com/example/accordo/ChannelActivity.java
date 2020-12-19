@@ -16,10 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.transition.MaterialContainerTransform;
 import com.stfalcon.imageviewer.StfalconImageViewer;
 
 import org.json.JSONException;
@@ -42,6 +44,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
 
+        setRecyclerView();
         // Prende l'indice del'elemento della RecyclerView dei canali della WallActivity
         // che è stato cliccato
         Intent intent = getIntent();
@@ -66,8 +69,9 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                 () -> getPosts()
         );
 
-        // Gestore evento di click sul bottone "Allega" per mostrare il popUp con la sceltra tra immagine e posizione
-        findViewById(R.id.attachButton).setOnClickListener(v -> {
+        // Gestore evento di click sul bottone "Allega" per mostrare il popUp con la sceltra tra immagine e posizione+
+        Button attachButton = findViewById(R.id.attachButton);
+        attachButton.setOnClickListener(v -> {
             PopupAttach popupAttach = new PopupAttach();
             popupAttach.showPopupWindow(v, findViewById(R.id.sendButton), this);
         });
@@ -104,7 +108,8 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                     response -> {
                         try {
                             Model.getInstance(this).addPosts(response);     // Setta le informazioni dei post e il contenuto dei post testo
-                            setRecyclerView();
+                            adapter.notifyData();
+                            scrollDownRecyclerView();
                             getPictures();                              // Setta le immagini profilo degli utenti
                             postsSwipeRefreshLayout.setRefreshing(false);
                         } catch (JSONException e) {
@@ -163,7 +168,6 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         rv.setLayoutManager(linearLayoutManager);
-        rv.scrollToPosition(0);
         rv.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             if (bottom < oldBottom) {
                 rv.scrollBy(0, oldBottom - bottom);
@@ -171,6 +175,12 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         });
         adapter = new PostAdapter(this, this);
         rv.setAdapter(adapter);
+        scrollDownRecyclerView();
+    }
+
+    private void scrollDownRecyclerView() {
+        rv.getLayoutManager().smoothScrollToPosition(rv, new RecyclerView.State(),0);
+        rv.scheduleLayoutAnimation();
     }
 
     /**
