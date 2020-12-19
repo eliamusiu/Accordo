@@ -29,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -162,6 +163,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
                             .make(getActivity().findViewById(R.id.bottomMenu), getResources().getString(R.string.updated_profile_info), Snackbar.LENGTH_LONG);
                     snackbar.setAnchorView(getActivity().findViewById(R.id.fab))
                             .show();
+                    ((WallActivity) getContext()).getActualUserProfile();
                 },
                 error -> {
                     if (error.networkResponse.statusCode == 400) {
@@ -174,6 +176,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
                     Log.e(TAG, "Errore richiesta: " + error);
                 });
     }
+
 
     /**
      * Prende il bitmap dell'immagine, la fa diventare un quadrato (crop) e setta l'imageView del

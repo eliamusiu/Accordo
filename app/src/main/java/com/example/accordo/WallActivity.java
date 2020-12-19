@@ -116,7 +116,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
      * Fa la richiesta di rete per ottenere l'utente attuale e, nella callback, salva la risposta in
      * {@link Model#setActualUser(User)}
      */
-    private void getActualUserProfile() {
+    public void getActualUserProfile() {
         // Prende le informazioni dell'utente dal server per poi mostrarle nell'imageView e nell'editText
         try {
             cc = new CommunicationController(this);
