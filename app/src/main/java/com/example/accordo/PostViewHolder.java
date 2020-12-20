@@ -1,7 +1,9 @@
 package com.example.accordo;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -9,14 +11,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import okhttp3.internal.Util;
 
 public class PostViewHolder extends RecyclerView.ViewHolder {
     private TextView  authorTextView, contentTextView;
     private ImageView contentImageView, profileImageView;
     private LinearLayout postContainerLinearLayout, postLinearLayout, authorLinearLayout;
-    private Button locationLinearLayout;
+    private Button locationPostButton;
     private OnPostRecyclerViewClickListener recyclerViewClickListener;
     private Context context;
 
@@ -30,7 +36,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         authorTextView = itemView.findViewById(R.id.authorTextView);
         contentTextView = itemView.findViewById(R.id.contentTextView);
         contentImageView = itemView.findViewById(R.id.contentImageView);
-        locationLinearLayout = itemView.findViewById(R.id.locationPostButton);
+        locationPostButton = itemView.findViewById(R.id.locationPostButton);
         profileImageView = itemView.findViewById(R.id.profileImageView);
     }
 
@@ -59,7 +65,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
      * Setta il click listener del {@link LinearLayout} del post di tipo posizione
      */
     public void updateContent() {
-        locationLinearLayout.setOnClickListener(this::onLocationClick);
+        locationPostButton.setOnClickListener(this::onLocationClick);
     }
 
     /**
@@ -84,13 +90,16 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         postContainerLinearLayout.setGravity(Gravity.RIGHT);
         authorLinearLayout.setVisibility(View.GONE);
         postLinearLayout.setBackgroundResource(R.drawable.my_post_background);
+        if (locationPostButton != null) {
+            setLocationPostButtonColor(R.attr.colorPost, R.attr.colorPrimary);
+        }
         if (contentTextView != null) {
             contentTextView.setTextColor(Utils.getThemeAttr(R.attr.colorOnPrimary, context));
         }
     }
 
     /**
-     * Allinea a destra i post pubblicati dagli altri utenti, rende visibile il nome dell'utente
+     * Allinea a sinistra i post pubblicati dagli altri utenti, rende visibile il nome dell'utente
      * e la sua immagine di profilo, mette il layout "fumetto" di ricezione e il colorOnBackground
      * per il testo (se è un post di tipo testo)
      */
@@ -98,8 +107,22 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         postContainerLinearLayout.setGravity(Gravity.LEFT);
         authorLinearLayout.setVisibility(View.VISIBLE);
         postLinearLayout.setBackgroundResource(R.drawable.their_post_background);
+        if (locationPostButton != null) {
+            setLocationPostButtonColor(R.attr.colorPrimary, R.attr.colorOnPrimary);
+        }
         if (contentTextView != null) {
             contentTextView.setTextColor(Utils.getThemeAttr(R.attr.colorOnBackground, context));
+        }
+    }
+
+    private void setLocationPostButtonColor(int backgroundColor, int textColor) {
+        locationPostButton.setBackgroundColor(Utils.getThemeAttr(backgroundColor, context));
+        locationPostButton.setTextColor(Utils.getThemeAttr(textColor, context));
+        Drawable[] drawables = locationPostButton.getCompoundDrawables();
+        for (Drawable drawable : drawables) {
+            if (drawable != null) {
+                drawable.setColorFilter(Utils.getThemeAttr(textColor, context), PorterDuff.Mode.SRC_ATOP);
+            }
         }
     }
 

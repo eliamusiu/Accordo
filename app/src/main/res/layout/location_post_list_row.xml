@@ -45,9 +45,7 @@
             android:id="@+id/locationPostButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_margin="8dp"
             android:drawableLeft="@drawable/ic_round_location_on_24"
             android:text="Posizione"/>
     </LinearLayout>
