@@ -153,7 +153,9 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                     ((EditText)findViewById(R.id.postEditText)).setText("");
                     getPosts();
                 },
-                error -> Log.e(TAG, "Errore aggiunta post: " + error));
+                error -> {
+                    Log.e(TAG, "Errore aggiunta post: " + error);
+                });
     }
 
     /**

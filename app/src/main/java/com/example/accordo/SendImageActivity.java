@@ -40,32 +40,55 @@ public class SendImageActivity extends AppCompatActivity {
         base64Image = Utils.getBase64FromBitmap(imageBitmap);
         ((ImageView)findViewById(R.id.pickedImageImageView)).setImageBitmap(imageBitmap);
 
+        // Controllo dimensione immagine
         if (base64Image.length() <= CommunicationController.MAX_IMAGE_LENGTH) {
             // Listener con callback per inviare l'immagine al server trasformandola in base64
             findViewById(R.id.sendImageButton).setOnClickListener(v -> {
                 sendImage();
             });
         } else {
-            findViewById(R.id.sendImageButton).setVisibility(View.GONE);
-            Snackbar snackbar = Snackbar
-                    .make(findViewById(R.id.pickedImageImageView), R.string.image_too_large_message, Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAnchorView(R.id.sendImageButton)
-                    .setAction("OK", v -> super.onBackPressed())
-                    .show();
+            showImageTooLargeMessage();
         }
     }
 
+    /**
+     * Mostra la {@link Snackbar} che informa che l'immagine è troppo grande per essere inviata.
+     * Contiene un bottone che permette di tornare all'acitivty precendente ({@link WallActivity})
+     */
+    private void showImageTooLargeMessage() {
+        findViewById(R.id.sendImageButton).setVisibility(View.GONE);
+        Snackbar snackbar = Snackbar
+                .make(findViewById(R.id.pickedImageImageView), R.string.image_too_large_message, Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAnchorView(R.id.sendImageButton)
+                .setAction("OK", v -> super.onBackPressed())
+                .show();
+    }
+
+    /**
+     * Effettua la chiamata di rete tramite il {@link CommunicationController} definendo la
+     * callback che fa tornare alla schermata precedente se la chiamata è andata a buon fine
+     */
     private void sendImage() {
         CommunicationController cc = new CommunicationController(this);
         try {
             cc.addPost(ctitle, base64Image, Post.IMAGE,
                     response -> super.onBackPressed(),
-                    error -> Log.e(TAG, "Errore invio immagine: " + error.networkResponse));
+                    error -> {
+                        Snackbar snackbar = Snackbar
+                                .make(findViewById(R.id.pickedImageImageView), R.string.image_sending_error_message, Snackbar.LENGTH_INDEFINITE);
+                        snackbar.setAnchorView(R.id.sendImageButton)
+                                .setAction("Riprova", v -> super.onBackPressed())
+                                .show();
+                        Log.e(TAG, "Errore invio immagine: " + error.networkResponse);
+                    });
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Imposta lo stile della toolbar
+     */
     private void setToolbar() {
         androidx.appcompat.widget.Toolbar myToolbar = findViewById(R.id.sendImageToolbar);
         setSupportActionBar(myToolbar);

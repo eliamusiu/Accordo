@@ -33,4 +33,5 @@
     <string name="my_channels">I miei canali</string>
     <string name="updated_profile_info">Informazioni aggiornate</string>
     <string name="already_used_username">Nome utente già usato</string>
+    <string name="image_sending_error_message">Errore nell\'invio dell\'immagine</string>
 </resources>
