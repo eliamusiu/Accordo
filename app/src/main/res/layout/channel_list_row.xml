@@ -16,7 +16,7 @@
         android:backgroundTint="?attr/colorPost"
         android:textSize="28dp"
         android:gravity="center"
-        android:textColor="?attr/colorOnSurface"
+        android:textColor="?attr/colorPrimary"
         android:text="C"/>
 
     <TextView

@@ -78,7 +78,7 @@ public class Model {
     private void getData() {
         ArrayList<Channel> newList = new ArrayList<>();
         String chFirstLetter = null, nextChFirstLetter = null;
-        boolean isMine = false;
+        boolean isMine = true;
 
         for (int i = 0; i < channels.size(); i++) {
             if (i == 0) { // Se il primo canale e mio, setto l'indice che poi avrà l'icona della stella
