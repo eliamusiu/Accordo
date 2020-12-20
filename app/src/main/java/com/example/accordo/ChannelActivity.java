@@ -175,7 +175,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         });
         adapter = new PostAdapter(this, this);
         rv.setAdapter(adapter);
-        scrollDownRecyclerView();
+     //   scrollDownRecyclerView();
     }
 
     private void scrollDownRecyclerView() {
