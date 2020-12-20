@@ -90,9 +90,9 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         postContainerLinearLayout.setGravity(Gravity.RIGHT);
         authorLinearLayout.setVisibility(View.GONE);
         postLinearLayout.setBackgroundResource(R.drawable.my_post_background);
-        if (locationPostButton != null) {
+        /*if (locationPostButton != null) {
             setLocationPostButtonColor(R.attr.colorPost, R.attr.colorPrimary);
-        }
+        }*/
         if (contentTextView != null) {
             contentTextView.setTextColor(Utils.getThemeAttr(R.attr.colorOnPrimary, context));
         }
@@ -107,15 +107,20 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         postContainerLinearLayout.setGravity(Gravity.LEFT);
         authorLinearLayout.setVisibility(View.VISIBLE);
         postLinearLayout.setBackgroundResource(R.drawable.their_post_background);
-        if (locationPostButton != null) {
+        /*if (locationPostButton != null) {
             setLocationPostButtonColor(R.attr.colorPrimary, R.attr.colorOnPrimary);
-        }
+        }*/
         if (contentTextView != null) {
             contentTextView.setTextColor(Utils.getThemeAttr(R.attr.colorOnBackground, context));
         }
     }
 
-    private void setLocationPostButtonColor(int backgroundColor, int textColor) {
+    /**
+     * Imposta il colore di sfondo e di testo e icona del bottone che apre la posizione dei post
+     * @param backgroundColor Colore di sfondo del bottone
+     * @param textColor Colore del testo e dell'icona (drawable)
+     */
+    /*private void setLocationPostButtonColor(int backgroundColor, int textColor) {
         locationPostButton.setBackgroundColor(Utils.getThemeAttr(backgroundColor, context));
         locationPostButton.setTextColor(Utils.getThemeAttr(textColor, context));
         Drawable[] drawables = locationPostButton.getCompoundDrawables();
@@ -124,7 +129,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
                 drawable.setColorFilter(Utils.getThemeAttr(textColor, context), PorterDuff.Mode.SRC_ATOP);
             }
         }
-    }
+    }*/
 
     /**
      * Setta l'{@link ImageView} dell'immagine del profilo dell'autore

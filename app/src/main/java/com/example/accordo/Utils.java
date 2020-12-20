@@ -146,4 +146,10 @@ public class Utils {
         context.getTheme().resolveAttribute(attr, typedValue, true);
         return typedValue.data;
     }
+
+    public static int getIdThemeAttr(int attr, Context context) {
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(attr, typedValue, true);
+        return typedValue.resourceId;
+    }
 }
