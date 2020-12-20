@@ -44,7 +44,6 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
 
-        setRecyclerView();
         // Prende l'indice del'elemento della RecyclerView dei canali della WallActivity
         // che è stato cliccato
         Intent intent = getIntent();
@@ -69,7 +68,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                 () -> getPosts()
         );
 
-        // Gestore evento di click sul bottone "Allega" per mostrare il popUp con la sceltra tra immagine e posizione+
+        // Gestore evento di click sul bottone "Allega" per mostrare il popUp con la sceltra tra immagine e posizione
         Button attachButton = findViewById(R.id.attachButton);
         attachButton.setOnClickListener(v -> {
             PopupAttach popupAttach = new PopupAttach();
@@ -108,8 +107,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                     response -> {
                         try {
                             Model.getInstance(this).addPosts(response);     // Setta le informazioni dei post e il contenuto dei post testo
-                            adapter.notifyData();
-                            scrollDownRecyclerView();
+                            setRecyclerView();
                             getPictures();                              // Setta le immagini profilo degli utenti
                             postsSwipeRefreshLayout.setRefreshing(false);
                         } catch (JSONException e) {
@@ -175,11 +173,15 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         });
         adapter = new PostAdapter(this, this);
         rv.setAdapter(adapter);
-     //   scrollDownRecyclerView();
+        scrollDownRecyclerView();
     }
 
+    /**
+     * Scorre in basso la RecyclerView con animazione
+     */
     private void scrollDownRecyclerView() {
-        rv.getLayoutManager().smoothScrollToPosition(rv, new RecyclerView.State(),0);
+        rv.scrollToPosition(16);            // Torna su di colpo (senza animazione)
+        rv.smoothScrollToPosition(0);       // Poi gli ultimi 16 elementi della rv li fa con animazione
         rv.scheduleLayoutAnimation();
     }
 
@@ -196,7 +198,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         int imagePosition = Utils.getImagePositionInPosts(position, Model.getInstance(this).getAllPosts());
         new StfalconImageViewer.Builder<>(this, images, (imageView, image) -> Glide.with(this)
                 .load(image)
-                .into(imageView)).withStartPosition(imagePosition).withTransitionFrom(contentImageView).show(); // TODO: con withStartPosition crasha
+                .into(imageView)).withStartPosition(imagePosition).withTransitionFrom(contentImageView).show(); // TODO: con withStartPosition crasha (nel simulatore)
     }
 
     /**

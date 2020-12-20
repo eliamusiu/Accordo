@@ -78,6 +78,7 @@ public class Model {
     private void getData() {
         ArrayList<Channel> newList = new ArrayList<>();
         String chFirstLetter = null, nextChFirstLetter = null;
+        boolean isMine = false;
 
         for (int i = 0; i < channels.size(); i++) {
             if (i == 0) { // Se il primo canale e mio, setto l'indice che poi avrà l'icona della stella
@@ -85,25 +86,28 @@ public class Model {
                     Channel ch = new Channel();
                     ch.setIndex(Channel.MY_CHANNEL_INDEX);
                     newList.add(ch);
-                    chFirstLetter = "P";
-                    nextChFirstLetter = Channel.NO_LETTER_INDEX;
-                } else {    // Altrimenti, mette '#'
+                    isMine = true;
+                }
+            } // Se il canale non è "mio"
+            if (channels.get(i).getMine().equals("f")) {
+                if (isMine) {                       // Aggiunge indice per i canali con primo char non lettera
+                    isMine = false;
                     Channel ch = new Channel();
                     ch.setIndex(Channel.NO_LETTER_INDEX);
                     newList.add(ch);
                 }
-            } // Se il canale non ha il nome vuoto (altrimenti crasha) e non è "mio"
-            if (!channels.get(i).getCtitle().equals("") && channels.get(i).getMine().equals("f")) {
-                chFirstLetter = Character.toString(channels.get(i).getCtitle().charAt(0)).toUpperCase();
-                try {
-                    nextChFirstLetter = Character.toString(channels.get(i + 1).getCtitle().charAt(0)).toUpperCase();
-                } catch (IndexOutOfBoundsException e) {
-                    nextChFirstLetter = Channel.NO_LETTER_INDEX;
+                if (!channels.get(i).getCtitle().equals("")) {      // Per evitare nullPointer del canale vuoto
+                    chFirstLetter = Character.toString(channels.get(i).getCtitle().charAt(0)).toUpperCase();
+                    try {
+                        nextChFirstLetter = Character.toString(channels.get(i + 1).getCtitle().charAt(0)).toUpperCase();
+                    } catch (IndexOutOfBoundsException e) {
+                        nextChFirstLetter = Channel.NO_LETTER_INDEX;
+                    }
                 }
             }
             newList.add(channels.get(i));       // Aggiunge il canale alla lista
             if (chFirstLetter != null && !chFirstLetter.equalsIgnoreCase(nextChFirstLetter)
-                    && !Character.isDigit(nextChFirstLetter.charAt(0)) && !channels.get(i).getCtitle().equals("")
+                    && Character.isLetter(nextChFirstLetter.charAt(0)) && !channels.get(i).getCtitle().equals("")
                     && i != channels.size() - 1) {
                     Channel ch = new Channel();
                     ch.setIndex(nextChFirstLetter);

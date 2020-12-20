@@ -30,6 +30,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
     private static final int ACTION_REQUEST_GALLERY = 1;
     private CommunicationController cc;
     private SwipeRefreshLayout wallSwipeRefreshLayout;
+    private RecyclerView rv;
     private ProfileBottomSheetFragment bottomSheetFragment;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -44,7 +45,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
                 Model.getInstance(this).getSid().equals("no")) {                        // o se è il default value
             getSid();                       // Richiesta di rete per ottenere il sid
         } else {                                                                    // Se c'è
-            getWall();
+            getWall(true);
             getActualUserProfile(); //ottiene l'utente attuale
         }
 
@@ -53,6 +54,8 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
                 if (item.getItemId() == R.id.profile_page) {
                     bottomSheetFragment = ProfileBottomSheetFragment.newInstance();
                     bottomSheetFragment.show(getSupportFragmentManager(), ProfileBottomSheetFragment.TAG);
+                } else if (item.getItemId() == R.id.home_page) {
+                    scrollDownRecyclerView();
                 }
             return false;
         });
@@ -67,7 +70,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         wallSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(Utils.getThemeAttr(R.attr.colorPost, this));
         wallSwipeRefreshLayout.setColorSchemeColors(Utils.getThemeAttr(R.attr.colorPrimary, this));
         wallSwipeRefreshLayout.setOnRefreshListener(
-                () -> getWall()
+                () -> getWall(false)
         );
 
         setToolbar();
@@ -91,7 +94,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
     /**
      * Fa la richiesta di rete per ottenere il sid, quando viene ricevuto, nella callback chiama
      * {@link #setSharedPreference(String)} per salvarlo nelle sharedPreferences e chiama
-     * {@link #getWall()} per ottenere i canali
+     * {@link #getWall(boolean)}} per ottenere i canali
      */
     private void getSid() {
         cc = new CommunicationController(this);
@@ -103,7 +106,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
                 snackbar.setAnchorView(R.id.fab)
                         .show();
                 getActualUserProfile(); //ottiene l'utente attuale
-                getWall();
+                getWall(true);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -145,12 +148,14 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
     /**
      * Fa richiesta di rete per ottenere i canali. Nella callback li aggiunge al model e chiama
      * {@link #setRecyclerView()}
+     * @param firstTime Indica se è la prima volta che si ottiene la bacheca, per non settare più
+     *                  volte {@link #addRecyclerViewItemDecoration()}, altrimenti si sommano
+     *                  togliendo la trasparenza di volta in volta
      */
-    private void getWall() {
+    private void getWall(boolean firstTime) {
         cc = new CommunicationController(this);
         try {
             cc.getWall(
-                    // TODO: fare metodo separato
                     response -> {
                         try {
                             Model.getInstance(this).addChannels(response);
@@ -158,6 +163,9 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
                             e.printStackTrace();
                         }
                         setRecyclerView();
+                        if (firstTime) {
+                            addRecyclerViewItemDecoration();
+                        }
                         wallSwipeRefreshLayout.setRefreshing(false);
                     },
                     error -> Log.d(TAG, "request error: " + error.toString()));
@@ -170,13 +178,27 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
      * Setta la recyclerView: layout e adapter
      */
     private void setRecyclerView() {
-        RecyclerView rv = findViewById(R.id.wallRecyclerView);
+        rv = findViewById(R.id.wallRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(layoutManager);
         ChannelAdapter adapter = new ChannelAdapter(this, this);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv.getContext());
-        rv.addItemDecoration(dividerItemDecoration);
         rv.setAdapter(adapter);
+
+    }
+
+    private void addRecyclerViewItemDecoration() {
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv.getContext());
+        rv.removeItemDecoration(dividerItemDecoration);
+        rv.addItemDecoration(dividerItemDecoration);
+    }
+
+    /**
+     * Scorre in alto la RecyclerView con animazione
+     */
+    private void scrollDownRecyclerView() {
+        rv.scrollToPosition(16);            // Torna su di colpo (senza animazione)
+        rv.smoothScrollToPosition(0);       // Poi gli ultimi 16 elementi della rv li fa con animazione
+        rv.scheduleLayoutAnimation();
     }
 
     /**
