@@ -11,6 +11,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +25,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class WallActivity extends AppCompatActivity implements OnRecyclerViewClickListener {
     final String TAG = WallActivity.class.toString();
@@ -39,15 +43,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wall);
 
-        // Accesso implicito
-        setSidFromSharedPreferences();      // Prende il sid dalle shared preferences
-        if (Model.getInstance(this).getSid() == null ||                                 // Se non c'è il sid
-                Model.getInstance(this).getSid().equals("no")) {                        // o se è il default value
-            getSid();                       // Richiesta di rete per ottenere il sid
-        } else {                                                                    // Se c'è
-            getWall(true);
-            getActualUserProfile(); //ottiene l'utente attuale
-        }
+        manageInternetConnectionCheck();
 
         // Gestore evento sulla barra di navigazione (modifica profilo)
         ((BottomNavigationView)findViewById(R.id.bottom_navigation)).setOnNavigationItemSelectedListener( item -> {
@@ -55,15 +51,13 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
                     bottomSheetFragment = ProfileBottomSheetFragment.newInstance();
                     bottomSheetFragment.show(getSupportFragmentManager(), ProfileBottomSheetFragment.TAG);
                 } else if (item.getItemId() == R.id.home_page) {
-                    scrollDownRecyclerView();
+                    rv.scrollToPosition(0);
                 }
             return false;
         });
 
         // Gestore evento su floating action button (aggiungi canale)
-        findViewById(R.id.fab).setOnClickListener( v -> {
-            createDialog();
-        });
+        findViewById(R.id.fab).setOnClickListener( v -> createDialog());
 
         // Gestore evento swipe to refresh (aggiorna canali)
         wallSwipeRefreshLayout = findViewById(R.id.wallSwiperefresh);
@@ -76,10 +70,44 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         setToolbar();
     }
 
+    /**
+     * Se il device è connesso a internet chiama {@link #checkSidInStorage()}, altrimenti mostra un dialog
+     * che richiede di attivare la connessione a Internet
+     */
+    private void manageInternetConnectionCheck() {
+        if (Utils.isNetworkAvailable(this)) {
+            checkSidInStorage();
+        } else {
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+            // Setta l'interfaccia
+            builder.setTitle("Connessione a Internet assente");
+            builder.setMessage("Attiva la connessione a Internet");
+            // Gestori eventi sui pulsanti del dialog
+            builder.setPositiveButton("Ok, fatto", (dialog, which) -> manageInternetConnectionCheck());
+            builder.show();
+        }
+    }
+
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.wallToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.app_name);
+    }
+
+    /**
+     * Controlla se il SID è presente nelle shared preferences e, in tal caso, chiama {@link #getWall(boolean)},
+     * altrimenti lo richiede al server
+     */
+    private void checkSidInStorage() {
+        // Accesso implicito
+        setSidFromSharedPreferences();      // Prende il sid dalle shared preferences
+        if (Model.getInstance(this).getSid() == null ||                                 // Se non c'è il sid
+                Model.getInstance(this).getSid().equals("no")) {                        // o se è il default value
+            getSid();                       // Richiesta di rete per ottenere il sid
+        } else {                                                                    // Se c'è
+            getWall(true);
+            getActualUserProfile(); //ottiene l'utente attuale
+        }
     }
 
     /**
@@ -192,14 +220,6 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         rv.addItemDecoration(dividerItemDecoration);
     }
 
-    /**
-     * Scorre in alto la RecyclerView con animazione
-     */
-    private void scrollDownRecyclerView() {
-        rv.scrollToPosition(16);            // Torna su di colpo (senza animazione)
-        rv.smoothScrollToPosition(0);       // Poi gli ultimi 16 elementi della rv li fa con animazione
-        rv.scheduleLayoutAnimation();
-    }
 
     /**
      * Gestore evento di click su un elemento (canale) della recyclerView
@@ -268,12 +288,19 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
             cc.addChannel(ctitle,
                     response -> {
                         Log.d(TAG, "Canale creato");
+                        getWall(false);
                         Snackbar snackbar = Snackbar
-                                .make(findViewById(R.id.bottomMenu),"Canale " + ctitle + " correttamente", Snackbar.LENGTH_LONG);
+                                .make(findViewById(R.id.bottomMenu),"Canale " + ctitle + " creato correttamente", Snackbar.LENGTH_LONG);
                         snackbar.setAnchorView(findViewById(R.id.fab))
                                 .show();
                     },
-                    error -> Log.d(TAG, "Errore creazione canale: " + error.toString())
+                    error -> {
+                        Log.d(TAG, "Errore creazione canale: " + error.toString());
+                        Snackbar snackbar = Snackbar
+                                .make(findViewById(R.id.bottomMenu),"Errore nella creazione del canale", Snackbar.LENGTH_LONG);
+                        snackbar.setAnchorView(findViewById(R.id.fab))
+                                .show();
+                    }
             );
         } catch (JSONException e) {
             e.printStackTrace();

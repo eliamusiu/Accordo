@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.transition.MaterialContainerTransform;
 import com.stfalcon.imageviewer.StfalconImageViewer;
 
@@ -155,6 +156,10 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                 },
                 error -> {
                     Log.e(TAG, "Errore aggiunta post: " + error);
+                    Snackbar snackbar = Snackbar
+                            .make(findViewById(R.id.sendButton),"Errore nell'invio del post", Snackbar.LENGTH_LONG);
+                    snackbar.setAnchorView(findViewById(R.id.sendButton))
+                            .show();
                 });
     }
 
@@ -252,8 +257,6 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
             Intent intent = new Intent(ChannelActivity.this, SendLocationActivity.class);
             intent.putExtra("ctitle", ctitle);
             startActivity(intent);
-        } else {
-            Log.d(TAG, "no good");
         }
     }
 
