@@ -66,7 +66,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         postsSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(Utils.getThemeAttr(R.attr.colorPost, this));
         postsSwipeRefreshLayout.setColorSchemeColors(Utils.getThemeAttr(R.attr.colorPrimary, this));
         postsSwipeRefreshLayout.setOnRefreshListener(
-                () -> getPosts()
+                () -> getPosts(false)
         );
 
         // Gestore evento di click sul bottone "Allega" per mostrare il popUp con la sceltra tra immagine e posizione
@@ -95,13 +95,15 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
     @Override
     protected void onResume() {
         super.onResume();
-        getPosts();
+        getPosts(false);
     }
 
     /**
-     * Fa la richiesta di rete del {@link CommunicationController} per ottenere i post
-      */
-    private void getPosts() {
+     * Fa la richiesta di rete del {@link CommunicationController} per ottenere i post. Nella
+     * callback chiama {@link #setRecyclerView()} e {@link #getPictures()}
+     * @param keepBottom Indica se la recycler view non deve fare l'animazione che scorre verso il basso
+     */
+    private void getPosts(boolean keepBottom) {
         cc = new CommunicationController(this);
         try {
             cc.getChannel(ctitle,
@@ -109,6 +111,11 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                         try {
                             Model.getInstance(this).addPosts(response);     // Setta le informazioni dei post e il contenuto dei post testo
                             setRecyclerView();
+                            if (!keepBottom) {
+                                scrollDownRecyclerView();
+                            } else {
+                                rv.scrollToPosition(0);
+                            }
                             getPictures();                              // Setta le immagini profilo degli utenti
                             postsSwipeRefreshLayout.setRefreshing(false);
                         } catch (JSONException e) {
@@ -152,7 +159,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         cc.addPost(ctitle, postText, Post.TEXT,
                 response -> {
                     ((EditText)findViewById(R.id.postEditText)).setText("");
-                    getPosts();
+                    getPosts(true);
                 },
                 error -> {
                     Log.e(TAG, "Errore aggiunta post: " + error);
@@ -173,14 +180,8 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         rv.setLayoutManager(linearLayoutManager);
-        rv.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            if (bottom < oldBottom) {
-                rv.scrollBy(0, oldBottom - bottom);
-            }
-        });
         adapter = new PostAdapter(this, this);
         rv.setAdapter(adapter);
-        scrollDownRecyclerView();
     }
 
     /**
@@ -236,7 +237,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_refresh) {
             postsSwipeRefreshLayout.setRefreshing(true);
-            getPosts();
+            getPosts(false);
             return true;
         } else {
             return super.onOptionsItemSelected(item);
