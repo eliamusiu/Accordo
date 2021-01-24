@@ -111,10 +111,8 @@ public class PictureController {
             cc.getUserPicture(uid, response -> {                  // Chiamata di rete
                         if (postAuthor != null) {                       // Se l'utente è già presente nel DB => aggiorna immagine
                             updateUser(response);                           // Setta i dati appena ottenuti nel model che fa l'update nel database
-                            handler.post(pictureReceivedCallback);          // Chiama la callback per informare che i dati sono stati aggiornati
                         } else {                                        // Se l'utente non è già presente nel DB/model => aggiungi immagine
                             addUser(response);                              // Setta i dati appena ottenuti nel model che fa la insert
-                            handler.post(pictureReceivedCallback);          // Chiama la callback per informare che i dati sono stati aggiunti
                         }
                         if (profilePicToRequest.indexOf(uid) == profilePicToRequest.size() - 1) {   // Se è l'ultima immagine ricevuta
                             handler.post(pictureReceivedCallback);
@@ -205,7 +203,7 @@ public class PictureController {
             cc.getPostImage(pid,
                     response -> {
                         try {
-                            Log.d(TAG, "scarico immagini dalla rete");
+                            Log.d(TAG, "Scarico immagini dalla rete");
                             model.addImage(pid, response.getString("content"));
                         } catch (JSONException e) {
                             e.printStackTrace();

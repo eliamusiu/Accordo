@@ -40,12 +40,9 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
     private ImageView profilePictureImageView;
     private EditText profileNameEditText;
     private Button editProfileImageButton, editProfileButton;
-    //private Context context;
     private Bitmap croppedProfilePicBitmap = null;
 
-    public ProfileBottomSheetFragment() {
-        // Required empty public constructor
-    }
+    public ProfileBottomSheetFragment() { }
 
     public static ProfileBottomSheetFragment newInstance() {
         return new ProfileBottomSheetFragment();
@@ -73,7 +70,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
             ((WallActivity) getContext()).onEditProfileImageClick();
         });
 
-        // Click sul bottone "modifica" per inviare al server le modifiche effettuate
+        // Click sul bottone "Salva" per inviare al server le modifiche effettuate
         view.findViewById(R.id.editProfileButton).setOnClickListener(v -> {
             try {
                 editProfile();
@@ -82,7 +79,7 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
             }
         });
 
-        //
+        // Abilita il bottone "Salva" solo se si sono effettuate modifiche
         profileNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
@@ -188,13 +185,13 @@ public class ProfileBottomSheetFragment extends BottomSheetDialogFragment {
         croppedProfilePicBitmap = Utils.cropImageToSquare(bitmap);
         String base64Image = Utils.getBase64FromBitmap(croppedProfilePicBitmap);
 
-        if (base64Image.length() > CommunicationController.MAX_IMAGE_LENGTH)  {
+        if (base64Image.length() > CommunicationController.MAX_IMAGE_LENGTH)  {     // Se l'immagine è troppo grande avviso
             this.dismiss();
             Snackbar snackbar = Snackbar
                     .make(getActivity().findViewById(R.id.bottomMenu),R.string.image_too_large_message, Snackbar.LENGTH_LONG);
             snackbar.setAnchorView(getActivity().findViewById(R.id.fab))
                     .show();
-        } else {
+        } else {        // Altrimenti setta l'immagine nell'imageView e permette di essere inviata al server
             editProfileButton.setEnabled(true);
             profilePictureImageView.setClipToOutline(true);
             profilePictureImageView.setImageBitmap(croppedProfilePicBitmap);

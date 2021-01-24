@@ -1,7 +1,6 @@
 package com.example.accordo;
 
 import android.content.Context;
-import android.os.Handler;
 
 import androidx.room.Room;
 
@@ -12,11 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Model {
     private static Model instance = null;
@@ -53,6 +48,15 @@ public class Model {
         return instance;
     }
 
+    public void setSid(String sid) {
+        this.sid = sid;
+    }
+
+    public String getSid() {
+        return sid;
+    }
+
+    //region Canali
     /**
      * Trasforma il JSON in un oggetto di tipo {@link Channel} e lo aggiunge a {@link #channels}
      * @param wallJson Json contenente i canali
@@ -67,7 +71,20 @@ public class Model {
             Channel channel = gson.fromJson(channelJson.toString(), Channel.class);
             channels.add(channel);
         }
-        getData();
+        addChannelIndex();
+    }
+
+    /**
+     * Ritorna il canale alla posizione specificata
+     * @param index
+     * @return
+     */
+    public Channel getChannel(int index) {
+        return new ArrayList<>(channels).get(index);
+    }
+
+    public int getChannelsSize() {
+        return channels.size();
     }
 
     /**
@@ -75,7 +92,7 @@ public class Model {
      * Oltre alle lettere sono un indice i canali "miei" (dell'utente loggato) e i caratteri
      * speciali, inclusi i numeri ("#")
      */
-    private void getData() {
+    private void addChannelIndex() {
         ArrayList<Channel> newList = new ArrayList<>();
         String chFirstLetter = null, nextChFirstLetter = null;
         boolean isMine = true;
@@ -117,6 +134,9 @@ public class Model {
         channels = newList;
     }
 
+    //endregion
+
+    //region Post
     /**
      * Trasforma il JSON in un oggetto di tipo {@link Post} e lo aggiunge a {@link #posts}
      * @param channelJson Json contenente i post
@@ -139,14 +159,6 @@ public class Model {
         }
     }
 
-    public void setSid(String sid) {
-        this.sid = sid;
-    }
-
-    public String getSid() {
-        return sid;
-    }
-
     /**
      * Ritorna tutti i post del canale attuale
      * @return Tutti i post del canale attuale
@@ -167,27 +179,6 @@ public class Model {
             }
         }
         return textImagePosts;
-    }
-
-    /**
-     * Ritorna l'utente specificato
-     * @param uid Utente che si vuole ottenere
-     * @return Utente con l'uid passato
-     */
-    public User getUser(String uid) {
-        return new ArrayList<>(users).stream()
-                .filter(user -> uid.equals(user.getUid()))
-                .findAny()
-                .orElse(null);
-    }
-
-    /**
-     * Ritorna il canale alla posizione specificata
-     * @param index
-     * @return
-     */
-    public Channel getChannel(int index) {
-        return new ArrayList<>(channels).get(index);
     }
 
     /**
@@ -214,11 +205,9 @@ public class Model {
     public int getPostsSize() {
         return posts.size();
     }
+    //endregion
 
-    public int getChannelsSize() {
-        return channels.size();
-    }
-
+    //region User
     public User getActualUser() {
         return actualUser;
     }
@@ -227,6 +216,18 @@ public class Model {
         this.actualUser = actualUser;
     }
 
+    /**
+     * Ritorna l'utente specificato
+     * @param uid Utente che si vuole ottenere
+     * @return Utente con l'uid passato
+     */
+    public User getUser(String uid) {
+        return new ArrayList<>(users).stream()
+                .filter(user -> uid.equals(user.getUid()))
+                .findAny()
+                .orElse(null);
+    }
+    //endregion
 
     //region Database immagini di profilo
     /**

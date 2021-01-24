@@ -46,14 +46,13 @@ public class PopupAttach {
         // Gestore evento di click su bottone allega immagine
         popupView.findViewById(R.id.attachImageButton).setOnClickListener(v -> {
             popupWindow.dismiss();
-            ((ChannelActivity)context).onAttachClick("i");
+            ((ChannelActivity)context).onAttachClick(Post.IMAGE);
         });
 
         // Gestore evento di click su bottone allega posizione
         popupView.findViewById(R.id.attachLocationButton).setOnClickListener(v -> {
             popupWindow.dismiss();
-            ((ChannelActivity)context).onAttachClick("l");
-
+            ((ChannelActivity)context).onAttachClick(Post.LOCATION);
         });
     }
 }

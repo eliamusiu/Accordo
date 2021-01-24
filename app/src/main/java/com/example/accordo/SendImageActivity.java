@@ -36,9 +36,10 @@ public class SendImageActivity extends AppCompatActivity {
 
         ctitle = getIntent().getStringExtra("ctitle");
 
+        // Prende il bitmap dall'URI (path), lo visualizza nella ImageView e lo trasforma in base64
         Bitmap imageBitmap = Utils.getBitmapFromUri(getIntent().getParcelableExtra("imagePath"), getContentResolver());
-        base64Image = Utils.getBase64FromBitmap(imageBitmap);
         ((ImageView)findViewById(R.id.pickedImageImageView)).setImageBitmap(imageBitmap);
+        base64Image = Utils.getBase64FromBitmap(imageBitmap);
 
         // Controllo dimensione immagine
         if (base64Image.length() <= CommunicationController.MAX_IMAGE_LENGTH) {
@@ -60,7 +61,7 @@ public class SendImageActivity extends AppCompatActivity {
         Snackbar snackbar = Snackbar
                 .make(findViewById(R.id.pickedImageImageView), R.string.image_too_large_message, Snackbar.LENGTH_INDEFINITE);
         snackbar.setAnchorView(R.id.sendImageButton)
-                .setAction("OK", v -> super.onBackPressed())
+                .setAction(R.string.ok_action, v -> super.onBackPressed())
                 .show();
     }
 

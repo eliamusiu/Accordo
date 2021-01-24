@@ -46,10 +46,6 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return new PostViewHolder(iView, context, recyclerViewClickListener);
             case POST_TYPE_LOCATION:
                 View lView = inflater.inflate(R.layout.location_post_list_row, parent, false);
-                /*TypedValue typedValue = new TypedValue();
-                Theme theme = context.getTheme();
-                theme.resolveAttribute(R.attr.theme_color, typedValue, true);
-                @ColorInt int color = typedValue.data; */
                 return new PostViewHolder(lView, context, recyclerViewClickListener);
         }
         return null;

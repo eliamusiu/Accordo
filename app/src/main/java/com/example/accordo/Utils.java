@@ -40,7 +40,7 @@ public class Utils {
             return decodedByte;
         } catch (IllegalArgumentException exception) {
             Log.e(TAG, "Formato immagine non supportato");
-            Bitmap brokenImageBitmap = BitmapFactory.decodeResource(context.getResources(), // TODO: ritorna null
+            Bitmap brokenImageBitmap = BitmapFactory.decodeResource(context.getResources(),
                     R.drawable.ic_round_broken_image_24);
             return brokenImageBitmap;
         }
@@ -81,7 +81,7 @@ public class Utils {
      * @return posizione dell'immagine (tra i post di tipo immagine)
      */
     public static int getImagePositionInPosts(int postPosition, ArrayList<Post> posts) {
-        Collections.reverse(posts); // TODO: togliere questa copia quando metteremo che il model ritorna direttamente una copia
+        Collections.reverse(posts);
         int imagePosition = 0;
         postPosition = (posts.size() - postPosition) - 1;
         for (Post post : posts) {

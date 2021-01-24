@@ -5,7 +5,6 @@
     <string name="unknown_author">Autore sconosciuto</string>
     <string name="fab_content_description">Aggiungi canale</string>
     <string name="channel_name_insert_hint">Nome del canale</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="preference_file_sid">sid</string>
     <string name="preference_file_sid_default_value">no</string>
@@ -34,4 +33,14 @@
     <string name="updated_profile_info">Informazioni aggiornate</string>
     <string name="already_used_username">Nome utente già usato</string>
     <string name="image_sending_error_message">Errore nell\'invio dell\'immagine</string>
+    <string name="new_user_created">Nuovo utente creato</string>
+    <string name="unavailable_network_connection">Connessione a Internet assente</string>
+    <string name="turn_on_network_connection">Attiva la connessione a Internet</string>
+    <string name="done_positive_button">Ok, fatto</string>
+    <string name="new_channel">Nuovo canale</string>
+    <string name="add_positive_button">Aggiungi</string>
+    <string name="channel_creation_error">Errore nella creazione del canale</string>
+    <string name="ok_action">Ok</string>
+    <string name="error_sending_location">Errore invio posizione</string>
+    <string name="error_sending_text_post">Errore nell\'invio del post</string>
 </resources>

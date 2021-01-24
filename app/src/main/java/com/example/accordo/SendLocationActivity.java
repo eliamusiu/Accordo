@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -18,7 +17,6 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
@@ -31,7 +29,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -67,7 +64,7 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
-                    Log.d(TAG, "Nessuna posizione");
+                    Log.e(TAG, "Nessuna posizione");
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
@@ -76,13 +73,13 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
                         setCameraPosition(currentLocation);
                         findViewById(R.id.sendLocationFab).setVisibility(View.VISIBLE);
                     } else {
-                        Log.d(TAG, "Ultima posizione non disponibile");
+                        Log.e(TAG, "Ultima posizione non disponibile");
                     }
                 }
             }
         };
 
-        // Gestore evento di clik sul bottone di invio della posizione
+        // Gestore evento di click sul bottone di invio della posizione
         findViewById(R.id.sendLocationFab).setOnClickListener(v -> {
             CommunicationController cc = new CommunicationController(this);
             try {
@@ -92,7 +89,7 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
                         response -> super.onBackPressed(),
                         error -> {
                             Context context = getApplicationContext();
-                            CharSequence text = "Errore invio posizione"; //TODO: fare strings
+                            CharSequence text = getString(R.string.error_sending_location);
                             int duration = Toast.LENGTH_LONG;
                             Toast toast = Toast.makeText(context, text, duration);toast.show();
                             Log.e(TAG, "Errore invio posizione: " + error.networkResponse);
@@ -147,9 +144,7 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 myMapboxMap = mapboxMap;
-                mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
-                    // Map is set up and the style has loaded. Now you can add data or make other map adjustments
-                });
+                mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> { });
                 setMapBehavior();
                 myMapboxMap.setStyle(Style.MAPBOX_STREETS, style -> mapStyle());
             }
@@ -175,9 +170,7 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         int index = getIntent().getIntExtra("postIndex", -1);
         if (index == -1) {
             getSupportActionBar().setTitle(R.string.send_location_activity_title);
-
             askToTurnOnLocation();
-           // getLastLocation();                 // Imposta la mappa sulla posizione dell'utente per l'invio
         } else {
             setCameraAtPostPosition(index);     // Imposta la mappa sulla posizione del post
         }
@@ -190,16 +183,14 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
 
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
-
+        } catch (Exception ex) { }
         try {
             network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ex) {}
+        } catch (Exception ex) { }
 
-        if(!gps_enabled && !network_enabled) {
-            // notify user
+        if (!gps_enabled && !network_enabled) {
+            // Notifica l'utente
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-
             // Setta l'interfaccia
             builder.setTitle(R.string.disabled_location_services);
             builder.setMessage(R.string.gps_network_not_enabled);
@@ -210,21 +201,9 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
             });
             builder.setNegativeButton(R.string.Cancel,null);
             builder.show();
-
-
-           /* new MaterialAlertDialogBuilder().Builder(this, AlertDialog.)
-                    .setMessage(R.string.gps_network_not_enabled)
-                    .
-                    .setPositiveButton(R.string.open_location_settings, (DialogInterface.OnClickListener) (paramDialogInterface, paramInt) -> {
-                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        locationServicesEnabled = true;
-                    })
-                    .setNegativeButton(R.string.Cancel,null)
-                    .show();*/
         } else {
             getLastLocation();
         }
-
     }
 
     /**
@@ -249,20 +228,12 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
      * @param latLng
      */
     private void setMarker(LatLng latLng) {
-        IconFactory iconFactory = IconFactory.getInstance(SendLocationActivity.this);       // TODO: trovare metodi non deprecati
+        IconFactory iconFactory = IconFactory.getInstance(SendLocationActivity.this);
         Icon icon = iconFactory.fromResource(R.drawable.mapbox_marker_icon_default);
 
-        // Add the marker to the map
         myMapboxMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .icon(icon));
-        myMapboxMap.setOnMarkerClickListener(new MapboxMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                Log.d(TAG, "Marker Cliccato");
-                return true;
-            }
-        });
     }
 
     /**
@@ -286,7 +257,7 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
     /**
      * Inizializza il client provider per la posizione
      */
-    private void setFusedLocation() {   // TODO: controllare se la posizione è attiva, altrimenti disabilitare bottone invia
+    private void setFusedLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         requestingLocationUpdates = true;
         startLocationUpdates();

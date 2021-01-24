@@ -22,8 +22,6 @@ public class CommunicationController {
         sid = Model.getInstance(context).getSid();
     }
 
-    // TODO: mettere assert nelle richieste
-
     /**
      * Richiesta di rete che ritorna il numero di sessione. Viene creato un nuovo utente senza nome
      * e senza immagine di profilo
@@ -32,6 +30,7 @@ public class CommunicationController {
      */
     public void register(Response.Listener<JSONObject> responseListener,
                          Response.ErrorListener errorListener) {
+        assert responseListener != null && errorListener != null;
         final String serviceUrl = "register.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();
@@ -50,6 +49,7 @@ public class CommunicationController {
      */
     public void getWall(Response.Listener<JSONObject> responseListener,
                         Response.ErrorListener errorListener) throws JSONException {
+        assert responseListener != null && errorListener != null;
         final String serviceUrl = "getWall.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();
@@ -72,6 +72,7 @@ public class CommunicationController {
      */
     public void getChannel(String ctitle, Response.Listener<JSONObject> responseListener,
                            Response.ErrorListener errorListener) throws JSONException {
+        assert ctitle != null && responseListener != null && errorListener != null;
         final String serviceUrl = "getChannel.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();
@@ -94,6 +95,7 @@ public class CommunicationController {
      */
     public void addChannel(String ctitle, Response.Listener<JSONObject> responseListener,
                            Response.ErrorListener errorListener) throws JSONException {
+        assert ctitle != null && responseListener != null && errorListener != null;
         final String serviceUrl = "addChannel.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();
@@ -118,6 +120,7 @@ public class CommunicationController {
     public void setProfile(String name, String picture,
                            Response.Listener<JSONObject> responseListener,
                            Response.ErrorListener errorListener) throws JSONException {
+        assert (name != null || picture != null) && responseListener != null && errorListener != null;
         final String serviceUrl = "setProfile.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();
@@ -141,6 +144,7 @@ public class CommunicationController {
      */
     public void getProfile(Response.Listener<JSONObject> responseListener,
                            Response.ErrorListener errorListener) throws JSONException {
+        assert responseListener != null && errorListener != null;
         final String serviceUrl = "getProfile.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();
@@ -164,6 +168,7 @@ public class CommunicationController {
                         Response.Listener<JSONObject> responseListener,
                         Response.ErrorListener errorListener) throws JSONException {
         assert type.equals(Post.TEXT) || type.equals(Post.IMAGE);
+        assert responseListener != null && errorListener != null;
         final String serviceUrl = "addPost.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();
@@ -191,7 +196,7 @@ public class CommunicationController {
     public void addPost(String ctitle, String lat, String lon, String type,
                         Response.Listener<JSONObject> responseListener,
                         Response.ErrorListener errorListener) throws JSONException {
-        assert type.equals(Post.LOCATION);
+        assert ctitle != null && responseListener != null && errorListener != null && type.equals(Post.LOCATION);
         final String serviceUrl = "addPost.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();
@@ -216,6 +221,7 @@ public class CommunicationController {
      */
     public void getPostImage(String pid, Response.Listener<JSONObject> responseListener,
                              Response.ErrorListener errorListener) throws JSONException {
+        assert pid != null && responseListener != null && errorListener != null;
         final String serviceUrl = "getPostImage.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();
@@ -237,6 +243,7 @@ public class CommunicationController {
      */
     public void getUserPicture(String uid, Response.Listener<JSONObject> responseListener,
                                Response.ErrorListener errorListener) throws JSONException {
+        assert uid != null && responseListener != null && errorListener != null;
         final String serviceUrl = "getUserPicture.php";
         final String url = BASE_URL + serviceUrl;
         final JSONObject jsonBody = new JSONObject();

@@ -80,10 +80,10 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         } else {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             // Setta l'interfaccia
-            builder.setTitle("Connessione a Internet assente");
-            builder.setMessage("Attiva la connessione a Internet");
+            builder.setTitle(R.string.unavailable_network_connection);
+            builder.setMessage(R.string.turn_on_network_connection);
             // Gestori eventi sui pulsanti del dialog
-            builder.setPositiveButton("Ok, fatto", (dialog, which) -> manageInternetConnectionCheck());
+            builder.setPositiveButton(R.string.done_positive_button, (dialog, which) -> manageInternetConnectionCheck());
             builder.show();
         }
     }
@@ -102,7 +102,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         // Accesso implicito
         setSidFromSharedPreferences();      // Prende il sid dalle shared preferences
         if (Model.getInstance(this).getSid() == null ||                                 // Se non c'è il sid
-                Model.getInstance(this).getSid().equals("no")) {                        // o se è il default value
+                Model.getInstance(this).getSid().equals(R.string.preference_file_sid_default_value)) { // o se è il default value
             getSid();                       // Richiesta di rete per ottenere il sid
         } else {                                                                    // Se c'è
             getWall(true);
@@ -129,8 +129,9 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         cc.register(response -> {
             try {
                 setSharedPreference((String) response.get("sid"));
+                // Snackbar
                 Snackbar snackbar = Snackbar
-                        .make(findViewById(R.id.bottomMenu),"Nuovo utente creato", Snackbar.LENGTH_LONG);
+                        .make(findViewById(R.id.bottomMenu),R.string.new_user_created, Snackbar.LENGTH_LONG);
                 snackbar.setAnchorView(R.id.fab)
                         .show();
                 getActualUserProfile(); //ottiene l'utente attuale
@@ -139,7 +140,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
                 e.printStackTrace();
             }
             Log.d(TAG, "request correct: " + response.toString());
-        }, error -> Log.d(TAG, "request error: " + error.toString())
+        }, error -> Log.e(TAG, "request error: " + error.toString())
         );
     }
 
@@ -220,7 +221,6 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         rv.addItemDecoration(dividerItemDecoration);
     }
 
-
     /**
      * Gestore evento di click su un elemento (canale) della recyclerView
      * @param v Elemento della recyclerView (il viewHolder) che è stato cliccato
@@ -264,13 +264,13 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
 
         // Setta l'interfaccia
-        builder.setTitle("Nuovo canale");
+        builder.setTitle(R.string.new_channel);
         builder.setView(R.layout.fragment_add_channel);
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_add_channel, null);
         builder.setView(view);
         // Gestori eventi sui pulsanti del dialog
-        builder.setPositiveButton("Aggiungi", (dialog, which) -> addChannel(view));
+        builder.setPositiveButton(R.string.add_positive_button, (dialog, which) -> addChannel(view));
         builder.show();
     }
 
@@ -297,7 +297,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
                     error -> {
                         Log.d(TAG, "Errore creazione canale: " + error.toString());
                         Snackbar snackbar = Snackbar
-                                .make(findViewById(R.id.bottomMenu),"Errore nella creazione del canale", Snackbar.LENGTH_LONG);
+                                .make(findViewById(R.id.bottomMenu),R.string.channel_creation_error, Snackbar.LENGTH_LONG);
                         snackbar.setAnchorView(findViewById(R.id.fab))
                                 .show();
                     }

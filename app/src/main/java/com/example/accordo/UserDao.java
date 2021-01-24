@@ -10,11 +10,6 @@ import java.util.List;
 
 @Dao
 public interface UserDao {
-    // TODO: vedere se serve
-    /*
-    @Query("SELECT uid, pversion, picture FROM User WHERE uid=:uid")
-    User getUser(String uid); */
-
     @Query("SELECT * FROM ProfilePictures")
     List<User> getAllUsers();
 

@@ -45,12 +45,12 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
 
-        // Prende l'indice del'elemento della RecyclerView dei canali della WallActivity
-        // che è stato cliccato
+        // Prende l'indice del'elemento della RecyclerView dei canali della WallActivity che è stato cliccato
         Intent intent = getIntent();
         ctitle = intent.getStringExtra("ctitle");
 
-        setToolbar();   // Setta la toolbar (titolo in alto della Activity)
+        // Setta la toolbar (titolo in alto della Activity, tasti back e refresh)
+        setToolbar();
 
         // Gestore evento di click sul bottone di invio del post
         findViewById(R.id.sendButton).setOnClickListener(v -> {
@@ -122,7 +122,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                             e.printStackTrace();
                         }
                     },
-                    error -> Log.d(TAG, "request error: " + error.toString()));
+                    error -> Log.e(TAG, "request error: " + error.toString()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -164,7 +164,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
                 error -> {
                     Log.e(TAG, "Errore aggiunta post: " + error);
                     Snackbar snackbar = Snackbar
-                            .make(findViewById(R.id.sendButton),"Errore nell'invio del post", Snackbar.LENGTH_LONG);
+                            .make(findViewById(R.id.sendButton), R.string.error_sending_text_post, Snackbar.LENGTH_LONG);
                     snackbar.setAnchorView(findViewById(R.id.sendButton))
                             .show();
                 });
@@ -206,7 +206,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
         int imagePosition = Utils.getImagePositionInPosts(position, Model.getInstance(this).getAllPosts());
         new StfalconImageViewer.Builder<>(this, images, (imageView, image) -> Glide.with(this)
                 .load(image)
-                .into(imageView)).withStartPosition(imagePosition).withTransitionFrom(contentImageView).show(); // TODO: con withStartPosition crasha (nel simulatore)
+                .into(imageView)).withStartPosition(imagePosition).withTransitionFrom(contentImageView).show();
     }
 
     /**
@@ -250,11 +250,11 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
      * @param type Tipo di allegato: "i" immagine, "l" posizione
      */
     public void onAttachClick(String type) {
-        if (type.equals("i")) {
+        if (type.equals(Post.IMAGE)) {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
             startActivityForResult(Intent.createChooser(intent, "Scegli immagine"), 1);
-        } else if (type.equals("l")){
+        } else if (type.equals(Post.LOCATION)){
             Intent intent = new Intent(ChannelActivity.this, SendLocationActivity.class);
             intent.putExtra("ctitle", ctitle);
             startActivity(intent);
