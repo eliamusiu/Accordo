@@ -148,6 +148,11 @@ public class Utils {
         return typedValue.data;
     }
 
+    /**
+     * Controlla se il device è connesso alla rete
+     * @param context
+     * @return True se è connesso, False altrimenti
+     */
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();

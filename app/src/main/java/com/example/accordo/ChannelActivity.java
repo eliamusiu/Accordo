@@ -202,7 +202,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
      */
     @Override
     public void onRecyclerViewImageClick(View v, int position) {
-        ImageView contentImageView = (ImageView)v;
+        ImageView contentImageView = (ImageView) v;
         int imagePosition = Utils.getImagePositionInPosts(position, Model.getInstance(this).getAllPosts());
         new StfalconImageViewer.Builder<>(this, images, (imageView, image) -> Glide.with(this)
                 .load(image)
@@ -211,7 +211,7 @@ public class ChannelActivity extends AppCompatActivity implements OnPostRecycler
 
     /**
      * Gestore dell'evento di click sulla posizione di un posti di tipo posizione. Fa partire
-     * {@link SendImageActivity} passandole la posizione del post in {@link #rv}
+     * {@link SendLocationActivity} passandole la posizione del post in {@link #rv}
      * @param v {@link android.widget.LinearLayout} della posizione che è stato cliccato
      * @param position Posizione dell'elemento cliccato in {@link #rv}
      */

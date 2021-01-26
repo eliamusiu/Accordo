@@ -153,7 +153,7 @@ public class PictureController {
 
     //region Gestione immagini dei post
     /**
-     * Prende l'istanza di {@link Model} e chiama {@link Model#setImagesFromDB()} ()}
+     * Prende l'istanza di {@link Model} e chiama {@link Model#setImagesFromDB()}
      * @param runnable Callback che verrà chiamata ad ogni immagine ricevuta
      */
     public void setPostImages(Runnable runnable) {

@@ -101,10 +101,11 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
     private void checkSidInStorage() {
         // Accesso implicito
         setSidFromSharedPreferences();      // Prende il sid dalle shared preferences
-        if (Model.getInstance(this).getSid() == null ||                                 // Se non c'è il sid
-                Model.getInstance(this).getSid().equals(R.string.preference_file_sid_default_value)) { // o se è il default value
+        Log.d(TAG, "checkSidInStorage: " + Model.getInstance(this).getSid());
+        if (Model.getInstance(this).getSid() == null ||           // Se non c'è il sid
+                Model.getInstance(this).getSid().equals(getString(R.string.preference_file_sid_default_value))) { // o se è il default value
             getSid();                       // Richiesta di rete per ottenere il sid
-        } else {                                                                    // Se c'è
+        } else {     // Se c'è
             getWall(true);
             getActualUserProfile(); //ottiene l'utente attuale
         }
@@ -122,7 +123,7 @@ public class WallActivity extends AppCompatActivity implements OnRecyclerViewCli
     /**
      * Fa la richiesta di rete per ottenere il sid, quando viene ricevuto, nella callback chiama
      * {@link #setSharedPreference(String)} per salvarlo nelle sharedPreferences e chiama
-     * {@link #getWall(boolean)}} per ottenere i canali
+     * {@link #getWall(boolean)} per ottenere i canali
      */
     private void getSid() {
         cc = new CommunicationController(this);
