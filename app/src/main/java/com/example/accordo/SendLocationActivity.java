@@ -140,14 +140,11 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
 
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                myMapboxMap = mapboxMap;
-                mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> { });
-                setMapBehavior();
-                myMapboxMap.setStyle(Style.MAPBOX_STREETS, style -> mapStyle());
-            }
+        mapView.getMapAsync(mapboxMap -> {
+            myMapboxMap = mapboxMap;
+            mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> { });
+            setMapBehavior();
+            myMapboxMap.setStyle(Style.MAPBOX_STREETS, style -> mapStyle());
         });
     }
 
@@ -160,7 +157,7 @@ public class SendLocationActivity extends AppCompatActivity implements ActivityC
         uiSettings.setCompassEnabled(true);
         uiSettings.setAllGesturesEnabled(true);
         uiSettings.setZoomGesturesEnabled(true);
-        uiSettings.setQuickZoomGesturesEnabled(true);
+        //uiSettings.setQuickZoomGesturesEnabled(true);
     }
 
     /**

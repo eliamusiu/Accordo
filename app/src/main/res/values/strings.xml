@@ -17,7 +17,7 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="attach_image">Immagine</string>
     <string name="attach_location">Posizione</string>
-    <string name="mapbox_access_token">pk.eyJ1IjoiZWxpYW11c2l1IiwiYSI6ImNraGFrcXFkbzFmZmIyeG81NW8zZTdhOWMifQ.KgW_Aaa7sK0LCV7u-GQ-rQ</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoiZWxpYW11c2l1IiwiYSI6ImNrejN6ZzR5OTA0cmcyb3VzNzdkcjY2bGEifQ.U6N2gbfCQksB98CjJInlDw</string>
     <string name="send_location_fab_content_description">Invia posizione</string>
     <string name="send_image_activity_title">Allega immagine</string>
     <string name="send_location_activity_title" >La tua posizione</string>
